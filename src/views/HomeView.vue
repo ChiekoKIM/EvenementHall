@@ -1,7 +1,7 @@
 
 <template>
 
-    <h1>EvenementHall</h1>
+    <h1 draggable="true">EvenementHall</h1>
 
     <div class="card">
         
@@ -15,7 +15,7 @@
                 <li>Password</li>
                 <input v-model="password" type="text">
             </ul>
-            <button @click="connexion" type="submit">submit</button>
+            <button @click="connexion" type="submit" >submit</button>
         </Form>
     
         <p>{{ name }}</p>
