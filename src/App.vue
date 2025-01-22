@@ -3,15 +3,25 @@
 </script>
 
 <template>
-  <h1>Hello App!</h1>
-  <p>
-    <!-- <strong>Current route path:</strong> {{ $route.fullPath }} -->
-  </p>
-  <nav>
-    <RouterLink to="/">Go to Home</RouterLink>
-    <RouterLink to="/test">Go to About</RouterLink>
-  </nav>
+
+  <!--<nav>
+    <RouterLink to="/">Evenment-Hall</RouterLink>
+    <RouterLink to="/test">Go to Test</RouterLink>
+  </nav>-->
+
+  <Navbar />
+
+
   <main>
     <RouterView />
   </main>
 </template>
+
+
+<script setup>
+import Navbar from './components/Navbar.vue';
+</script>
+
+<style>
+/* Styles globaux ici */
+</style>

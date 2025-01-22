@@ -1,6 +1,6 @@
 
 <template>
-    <h1>Hello App!</h1>
+    <h1>Hello Home!</h1>
 
 </template>
 
