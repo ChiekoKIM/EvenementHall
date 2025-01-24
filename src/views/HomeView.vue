@@ -36,7 +36,7 @@ const router  = useRouter()
 function connexion(){
     if(password.value==="1234"){
         console.log("password ok")
-        router.push({path: 'Test'})
+        router.push({path: 'Simulation'})
     } else {
         console.log("password incorrect")
     }
