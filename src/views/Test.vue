@@ -18,7 +18,33 @@
 <script lang="ts" setup>
 import { createElementBlock, onMounted, ref } from 'vue';
 
+//const objets = ref<HTMLImageElement[]>([])
 const objets = ref<HTMLImageElement[]>([])
+//const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
+//const ctx = canvas?.getContext("2d");
+const selectImage = ref({
+    img : "",
+    x: 0,
+    y:0
+})
+const isDragging = ref(false);
+
+class meuble{
+    x:number;
+    y:number;
+    url:string
+    constructor(x: number, y: number, url:string){
+        this.x = x;
+        this.y = y;
+        this.url = url 
+    }
+
+    draw(){
+
+    }
+}
+
+
 
 onMounted(() => {
     console.log("Hello test");
@@ -62,11 +88,16 @@ function createImage(url : string, x:number, y:number){
             let img = new Image();
             img.src = url
             img.onload = () => {
-                ctx.drawImage(img,x,y,100,100)
+            ctx.drawImage(img,x,y,100,100)
             };
         }
+
+
     }
 }
+
+
+
 
 function clear(){
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
@@ -78,9 +109,11 @@ function clear(){
             ctx.clearRect(0,0,canvas.width, canvas.height)
             ctx.fillStyle = "gray";
             ctx.fillRect(10, 10, 600, 600);
-
-        
         }
     }
 }
+
+
+
+
 </script>
