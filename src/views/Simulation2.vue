@@ -1,5 +1,5 @@
 <template>
-    <h1>Page Simulation</h1>
+    <h1>Page Simulation2</h1>
 
     <div class="flex">
         <div>
@@ -19,31 +19,35 @@
     </div>
 
 
-    <canvas 
+
+        <canvas 
         class="canvas" 
         @mousedown="startDrag"
         @mousemove="drag"
         @mouseup="stopDrag"
         ></canvas>
-        @click="e=>clickCanvas(e)"
+
 </template>
 
 <script lang="ts" setup>
 import { createElementBlock, onMounted, reactive, ref } from 'vue';
 
 const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
+//const ctx = canvas.getContext("2d") || null;
 const objets: NewObjet[] = [] // table for newObjet
 
 interface NewObjet {
     x:number,
     y:number,
-    url:string,
-    selected:boolean
+    url:any,
+    selected:boolean,
+    img:HTMLImageElement
 }
 
 let isDragging = false;
 let currentObject: NewObjet | null = null;
 
+//Initialisation dessine rectongle gray
 onMounted(() => {
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
 
@@ -53,7 +57,6 @@ onMounted(() => {
 
         const ctx = canvas.getContext("2d");
         if (ctx) {
-            // Dessiner un rectangle vert
             ctx.fillStyle = "gray";
             ctx.fillRect(10, 10, 600, 600);
         } else {
@@ -63,9 +66,37 @@ onMounted(() => {
         console.error("Canvas introuvable");
     }
 
-    //update()
+    update()
 });
 
+//function boucle pour dessiner 
+function update(){
+
+        drawCanvas()
+        let animation = requestAnimationFrame(update)
+}
+// redessiner un carre et des objets
+function drawCanvas() {
+    console.log("redessiner")
+
+    const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
+
+    if(canvas) {
+        const ctx = canvas.getContext("2d");
+
+        if(ctx) {
+            ctx.clearRect(0,0,canvas.width, canvas.height)
+            ctx.fillStyle = "gray";
+            ctx.fillRect(10, 10, 600, 600);
+
+            objets.forEach((obj) => {
+            if (obj.url) {
+                ctx.drawImage(obj.img, obj.x, obj.y, 100,100)
+            }
+            });
+        }
+    }
+}
 // function pour button afficher des images sur canvas
 function createImage(x:number, y:number,url : string ){
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
@@ -79,7 +110,7 @@ function createImage(x:number, y:number,url : string ){
             img.onload = () => {
             ctx.drawImage(img,x,y,100,100) // taille image 100px 100px 
             //console.log(x,y,url)
-            objets.push({x,y,url,selected:false })
+            objets.push({x,y,url,selected:false,img })
 
             console.log(objets)
             };
@@ -103,66 +134,65 @@ function clear(){
 }
 
 
-
-/// détecter les élémént image au mement de click sur canvas -> detecter INDEX
+/// startdrug -> detecter INDEX
 function startDrag(event:MouseEvent) {
-    /// position click sur window
-    //console.log( "event" + event.x +" "+ event.y)
+    console.log("start drag")
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
     if(canvas ){
-        /// position canvas sur window
-        const canvasPosition = canvas.getBoundingClientRect();
-        //console.log("relatif canvas : "+canvasPosition.top +" " + canvasPosition.left)
+        const canvasPosition = canvas.getBoundingClientRect(); // position de canvas sur window 
 
-        /// position click sur canvas element (salle carré) 
-        const canvasPointX = event.clientX - canvasPosition.left
-        const canvasPointY = event.clientY - canvasPosition.top
-        //console.log("position click sur canvas  : " + canvasPointX + " " + canvasPointY) 
+        const mouseX = event.clientX - canvasPosition.left 
+        const mouseY = event.clientY - canvasPosition.top
+
+        currentObject = getClickObjet(mouseX,mouseY) // image detecté = currentObjet
+
         
-        /// Vérifier si le clic est sur une image, si il y a un image isDruggin=true
-        objets.forEach((selected) => {
-            //console.log("selectedX :", selected.x, "selectedY :", selected.y);
-            if (
-                canvasPointX >= selected.x && // Clic x et left de l'image
-                canvasPointX <= selected.x + 100 && // Clic x et right de l'image
-                canvasPointY >= selected.y && // Clic y et  de top l'image
-                canvasPointY <= selected.y + 100 // Clic y et bottom de l'image
-            ) {
-                console.log("Collision détectée sur l'image à :", selected.x, selected.y);
-               // selected.selected = true; // Changer la variable `selected` à true
-
-            } else {
-                console.log('aucun image détecté')
-               // selected.selected = false; // Réinitialiser si pas cliqué
-            }
-
+        if(currentObject) {
             isDragging=true
-            console.log(objets) // pour verifier le valeur selected
-        });
+            currentObject.selected=true
+            console.log("Get current objet")
+        }
 
     }
 }
 
-// DRUG , déplacer des element 
+// detecter l'objet cliqué
+function getClickObjet(x: number, y:number){
+   return objets.find((selected) => {
+         if (
+                x >= selected.x && // Clic x et left de l'image
+                x <= selected.x + 100 && // Clic x et right de l'image
+                y >= selected.y && // Clic y et  de top l'image
+                y <= selected.y + 100 // Clic y et bottom de l'image
+            ) {
+                console.log("Collision détectée à :", selected.x, selected.y);
+                console.log("selected element : "  )
+                return selected
+            } else {
+                console.log('aucun image détecté')
+            }
+        }) || null;
+}
+
+// Drag , déplacer des element 
 function drag(event : MouseEvent) {
 
     console.log("mousedown")
     console.log(isDragging)
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
-    if(canvas && isDragging) {
+    if(canvas && isDragging && currentObject) {
         console.log("drug objet")
 
-        
-        /*const canvasPosition = canvas.getBoundingClientRect();
+        const canvasPosition = canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasPosition.left;
         const mouseY = event.clientY - canvasPosition.top;
-        console.log(`Mouse down at canvas position: X=${mouseX}, Y=${mouseY}`);
 
-        addEventListener("mousedown", (event) => {
-            console.log(event)
-        })*/
+        currentObject.x = mouseX -50 ;
+        currentObject.y = mouseY-50;
+
+        drawCanvas()
     }
 }
 
@@ -174,35 +204,6 @@ function stopDrag() {
 
 
 
-
-
-
-
-
-/*interface EventClick extends Event {
-    x:number
-    y:number
-}*/
-
-/*class meuble{
-    x:number;
-    y:number;
-    url:string
-    image : HtmlImageElement
-    constructor(x: number, y: number, url:string){
-        this.x = x;
-        this.y = y;
-        this.url = url 
-        img.src = url
-        img.onload = () => {
-        let newObjet =  ctx.drawImage(img,x,y,100,100)
-            };
-    }
-
-    draw(){
-   
-    }
-}*/
 
 
 </script>

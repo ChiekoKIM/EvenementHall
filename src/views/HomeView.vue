@@ -14,15 +14,13 @@
                 
                 <li>Password</li>
                 <input v-model="password" type="text">
-
             </ul>
             <button @click="connexion" type="submit" >submit</button>
-            <button @click="testBTN">BUTTON</button>
+            <button @click="test" type="submit" >test</button>
         </Form>
     
         <p>{{ name }}</p>
         <p>{{ password }}</p>
-
     </div>
 
 
@@ -40,19 +38,19 @@ function connexion(){
     if(password.value==="1234"){
         console.log("password ok")
         router.push({path: 'Simulation'})
-        
     } else {
         console.log("password incorrect")
     }
 }
 
-function testBTN(){
-    console.log("TESTTETSTTETSTT")
-    router.push("/Test")
+function test(){
+    router.push("/Simulation2")
+
 }
+
 </script>
 
-<style scoped>
+<style>
 
 form {
     background-color: antiquewhite;
