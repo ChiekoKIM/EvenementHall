@@ -1,6 +1,9 @@
 <template>
     <h1>Page Simulation de salle</h1>
 
+    changer la taille de image selectioné
+    <button @click="expandImage">Image plus grand</button>
+    <button @click="reduceImage">Image plus petit</button>
     <div class="flex">
         <div class="blocBtn">
 
@@ -32,7 +35,7 @@
                 >
                 TV
             </button>
-            <button @click="clear"> clear</button>
+            <button @click="clear"> Clear</button>
         </div>
 
         <canvas 
@@ -43,6 +46,7 @@
         ></canvas>
     </div>
     
+
 
 </template>
 
@@ -59,7 +63,9 @@ interface NewObjet {
     y:number,
     url:any,
     selected:boolean,
-    img:HTMLImageElement
+    img:HTMLImageElement,
+    width: number,
+    height: number
 }
 
 let isDragging = false;
@@ -107,7 +113,7 @@ function drawCanvas() {
 
             objets.forEach((obj) => {
             if (obj.url) {
-                ctx.drawImage(obj.img, obj.x, obj.y, 100,100)
+                ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height)
             }
             });
         }
@@ -126,7 +132,7 @@ function createImage(x:number, y:number,url : string ){
             img.onload = () => {
             ctx.drawImage(img,x,y,100,100) //taille d'image 100px 100px 
             //console.log(x,y,url)
-            objets.push({x,y,url,selected:false,img })
+            objets.push({x,y,url,selected:false,img, width:100, height:100 })
 
             console.log(objets) // verifier les tableau 
             };
@@ -143,7 +149,7 @@ function clear(){
 
         if(ctx) {
             ctx.clearRect(0,0,canvas.width, canvas.height)
-            ctx.fillStyle = "gray";
+            ctx.fillStyle = "#a8a6a6";
             ctx.fillRect(10, 10, 600, 600);
             
             objets.length=0; // vider dans le tableau
@@ -219,7 +225,25 @@ function stopDrag() {
     //console.log(isDragging) // false
 }
 
+// function grandir des image
+function expandImage(){
+    if(currentObject) {
+        currentObject.width += 10
+        currentObject.height += 10
+        console.log(currentObject.width)
+        drawCanvas()
+    }
+}
 
+// function diminuer de taille de image
+function reduceImage(){
+    if(currentObject) {
+        currentObject.width -= 10
+        currentObject.height -= 10
+        console.log(currentObject.width)
+        drawCanvas()
+    }
+}
 
 
 
@@ -245,7 +269,7 @@ function stopDrag() {
     height: 4rem;
     margin:2.5rem;
     background-color: #fcf7f1;
-    border: rgb(168, 166, 166) solid 2px;
+    border: #a8a6a6 solid 2px;
     border-radius: 5px;
  }
 
