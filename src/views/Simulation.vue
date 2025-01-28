@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts" setup>
-import { createElementBlock, onMounted, reactive, ref } from 'vue';
+import { createElementBlock , onMounted, reactive, ref } from 'vue';
 
 const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
 const objets: NewObjet[] = [] // table for newObjet

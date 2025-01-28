@@ -16,11 +16,11 @@
                 <input v-model="password" type="text">
             </ul>
             <button @click="connexion" type="submit" >submit</button>
-            <button @click="test" type="submit" >test</button>
+            
         </Form>
     
-        <p>{{ name }}</p>
-        <p>{{ password }}</p>
+        <p>name : {{ name }}</p>
+        <p>input : {{ password }}</p>
     </div>
 
 
@@ -37,16 +37,12 @@ const router  = useRouter()
 function connexion(){
     if(password.value==="1234"){
         console.log("password ok")
-        router.push({path: 'Simulation'})
+        router.push({path: 'SimulationSalle'})
     } else {
         console.log("password incorrect")
     }
 }
 
-function test(){
-    router.push("/Simulation2")
-
-}
 
 </script>
 

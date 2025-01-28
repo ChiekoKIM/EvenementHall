@@ -1,5 +1,5 @@
 <template>
-    <h1>Page Simulation2</h1>
+    <h1>Page Simulation de salle</h1>
 
     <div class="flex">
         <div>
@@ -18,8 +18,6 @@
         <div class="objet"></div>
     </div>
 
-
-
         <canvas 
         class="canvas" 
         @mousedown="startDrag"
@@ -30,10 +28,11 @@
 </template>
 
 <script lang="ts" setup>
-import { createElementBlock, onMounted, reactive, ref } from 'vue';
+import { onMounted } from 'vue';
 
 const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
 //const ctx = canvas.getContext("2d") || null;
+
 const objets: NewObjet[] = [] // table for newObjet
 
 interface NewObjet {
@@ -71,13 +70,11 @@ onMounted(() => {
 
 //function boucle pour dessiner 
 function update(){
-
         drawCanvas()
         let animation = requestAnimationFrame(update)
 }
 // redessiner un carre et des objets
 function drawCanvas() {
-    console.log("redessiner")
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
 
@@ -108,11 +105,11 @@ function createImage(x:number, y:number,url : string ){
             let img = new Image();
             img.src = url
             img.onload = () => {
-            ctx.drawImage(img,x,y,100,100) // taille image 100px 100px 
+            ctx.drawImage(img,x,y,100,100) //taille d'image 100px 100px 
             //console.log(x,y,url)
             objets.push({x,y,url,selected:false,img })
 
-            console.log(objets)
+            console.log(objets) // verifier les tableau 
             };
         }
     }
@@ -129,6 +126,8 @@ function clear(){
             ctx.clearRect(0,0,canvas.width, canvas.height)
             ctx.fillStyle = "gray";
             ctx.fillRect(10, 10, 600, 600);
+            
+            objets.length=0; // vider dans le tableau
         }
     }
 }
@@ -151,7 +150,6 @@ function startDrag(event:MouseEvent) {
         if(currentObject) {
             isDragging=true
             currentObject.selected=true
-            console.log("Get current objet")
         }
 
     }
@@ -167,7 +165,7 @@ function getClickObjet(x: number, y:number){
                 y <= selected.y + 100 // Clic y et bottom de l'image
             ) {
                 console.log("Collision détectée à :", selected.x, selected.y);
-                console.log("selected element : "  )
+                console.log("selected element : " + selected )
                 return selected
             } else {
                 console.log('aucun image détecté')
@@ -175,15 +173,15 @@ function getClickObjet(x: number, y:number){
         }) || null;
 }
 
-// Drag , déplacer des element 
+// Drag et déplacer des element / 
 function drag(event : MouseEvent) {
 
-    console.log("mousedown")
-    console.log(isDragging)
+    //console.log("mousedown")
+    //console.log(isDragging) // true
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
     if(canvas && isDragging && currentObject) {
-        console.log("drug objet")
+        //console.log("drug objet")
 
         const canvasPosition = canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasPosition.left;
@@ -192,14 +190,14 @@ function drag(event : MouseEvent) {
         currentObject.x = mouseX -50 ;
         currentObject.y = mouseY-50;
 
-        drawCanvas()
+        drawCanvas() // function redessiner un image
     }
 }
 
 function stopDrag() {
     isDragging=false
-    console.log("stop drug")
-    console.log(isDragging)
+    //console.log("stop drug")
+    //console.log(isDragging) // false
 }
 
 
@@ -209,7 +207,5 @@ function stopDrag() {
 </script>
 
 <style scoped>
-    .flex {
-        display: flex;
-    }
+
 </style>
