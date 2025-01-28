@@ -2,21 +2,38 @@
     <h1>Page Simulation de salle</h1>
 
     <div class="flex">
-        <div>
-            <button  @click="createImage(0,5,'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg?t=st=1737498123~exp=1737501723~hmac=fbcd6c63bfcf5138310baccf7453cd48fecf0ed933baef2b113d6f7323b4add4&w=826')">
-                table
+        <div class="blocBtn">
+
+            <button 
+            @click="createImage(0,5,'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg?t=st=1737498123~exp=1737501723~hmac=fbcd6c63bfcf5138310baccf7453cd48fecf0ed933baef2b113d6f7323b4add4&w=826')"
+            >
+                <img 
+                    src="/src/assets/icon/table.png" 
+                    alt="Button Table"
+                    >
+                Table
             </button>
-            <button  @click="createImage(100,5,'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826')">
-                chaise
+
+            <button  
+                @click="createImage(100,5,'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826')"
+                >
+                <img 
+                src="/src/assets/icon/chaise-de-bureau.png" 
+                alt="Button Chaise"
+                >
+                Chaise
             </button>
-            <button  @click="createImage(200,5,'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming')">
-                tv
+            <button  
+            @click="createImage(200,5,'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming')"
+            >
+            <img 
+                src="/src/assets/icon/moniteur.png" 
+                alt="Button tv"
+                >
+                TV
             </button>
             <button @click="clear"> clear</button>
         </div>
-    
-        <div class="objet"></div>
-    </div>
 
         <canvas 
         class="canvas" 
@@ -24,6 +41,8 @@
         @mousemove="drag"
         @mouseup="stopDrag"
         ></canvas>
+    </div>
+    
 
 </template>
 
@@ -207,5 +226,31 @@ function stopDrag() {
 </script>
 
 <style scoped>
+ .flex {
+    width: 100vh;
+    display: flex;
+ }
+
+ .blocBtn {
+    background-color: #fdf2e7;
+    padding: 1.5rem;
+    margin-right: 2rem;
+    margin-top: 0.5rem;
+    height: 35rem;
+    border-radius: 5px;
+ }
+
+ button {
+    width: 4rem;
+    height: 4rem;
+    margin:2.5rem;
+    background-color: #fcf7f1;
+    border: rgb(168, 166, 166) solid 2px;
+    border-radius: 5px;
+ }
+
+ img {
+    width: 2rem;
+ }
 
 </style>
