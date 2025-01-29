@@ -44,7 +44,7 @@
         TV
       </button>
       <button @click="clear">Clear</button>
-      <button>
+      <button @click="saveToLocalStorage">
         <img src="/src/assets/icon/save-icon.png" alt="Save Button">
         Save
       </button>
@@ -66,12 +66,12 @@ import { onMounted, ref } from "vue";
 const canvas = ref<HTMLCanvasElement | null>(null);
 let ctx: CanvasRenderingContext2D | null = null;
 
-const objets: NewObjet[] = []; // table for newObjet
+const objets: NewObjet[] = []; // NewObjet = 1 image = un article ajouté au canva
 
 interface NewObjet {
   x: number;
   y: number;
-  url: any;
+  url?: string;
   selected: boolean;
   img: HTMLImageElement;
   width: number;
@@ -83,8 +83,15 @@ let currentObject: NewObjet | null = null;
 
 //Initialisation dessine rectongle gray
 onMounted(() => {
+  loadSavedCanvas()
   initCanvas();
 });
+
+function loadSavedCanvas() {
+  let saved = localStorage.getItem("savedCanvases")
+  let savedCanvases = saved ? JSON.parse(saved) : []
+  console.log(savedCanvases);
+}
 
 function initCanvas() {
   if (!canvas.value) {
@@ -124,9 +131,13 @@ function drawCanvas() {
   ctx.fillRect(10, 10, 600, 600);
 
   objets.forEach((obj) => {
+    if (!ctx) return;
     if (obj.url) {
-      if (!ctx) return;
       ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+    }
+    else {
+      ctx.fillStyle = "red";
+      ctx.fillRect(obj.x, obj.y, obj.width, obj.height)
     }
   });
 }
@@ -249,6 +260,39 @@ function reduceImage() {
 // function save to LocalStorage
 function saveToLocalStorage() {
 
+  if (objets.length === 0) {
+    alert("Aucun objet à sauvegarder !")
+    return;
+  }
+
+  const name = prompt("Nom de la configuration du canvas :")
+  if (!name) return;
+
+  // Récupérer les configurations existantes
+  let saved = localStorage.getItem("savedCanvases")
+  let savedCanvases = saved ? JSON.parse(saved) : []
+
+  // Vérifier si un canvas avec ce nom existe déjà
+  const nameExists = savedCanvases.some((config: any) => config.name === name)
+  if (nameExists) {
+    alert("Une configuration avec ce nom existe déjà. Veuillez choisir un autre nom.")
+    return;
+  }
+
+  // Créer une configuration avec un ID unique
+  const newConfig = {
+    id: Date.now(),
+    name,
+    objects: [...objets], // Sauvegarde une copie des objets actuels
+  };
+
+  // Ajouter la nouvelle configuration et sauvegarder
+  savedCanvases.push(newConfig)
+  console.log(savedCanvases)
+
+  localStorage.setItem("savedCanvases", JSON.stringify(savedCanvases)); // Enregistrement dans LocalStorage
+
+  alert("Configuration sauvegardée !")
 }
 </script>
 
