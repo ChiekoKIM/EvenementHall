@@ -63,8 +63,14 @@
         </div>
 
         <div class="flex">
-          <button @click="" class="resizeBtn">-</button>
+          <button @click="rotateImageleft" class="resizeBtn">-</button>
           <p>Rotate Image</p>
+          <button @click="rotateImageright" class="resizeBtn">+</button>
+        </div>
+
+        <div class="flex">
+          <button @click="" class="resizeBtn">-</button>
+          <p>Mirroir Image</p>
           <button @click="" class="resizeBtn">+</button>
         </div>
       </div>
@@ -88,6 +94,7 @@ interface NewObjet {
   img: HTMLImageElement;
   width: number;
   height: number;
+  angle: number;
 }
 
 let isDragging = false;
@@ -111,9 +118,11 @@ function initCanvas() {
   if (!ctx) return;
 
   ctx.fillStyle = "gray";
-  let rectongle = ctx.fillRect(10, 10, 600, 600);
-  console.log(rectongle);
 
+  let img = new Image();
+  img.src =
+    "https://img.freepik.com/free-photo/grey-felt-texture_1298-489.jpg?t=st=1738141993~exp=1738145593~hmac=65eedc5678010a11f397a261a9c13bd4050ac1213ef5905b72c2ab5844712004&w=740";
+  ctx.drawImage(img, 0, 0, 100, 100);
   update();
 }
 
@@ -133,13 +142,22 @@ function drawCanvas() {
   if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-  ctx.fillStyle = "gray";
-  ctx.fillRect(10, 10, 600, 600);
+  // ctx.fillStyle = "gray";
+  //ctx.fillRect(10, 10, 600, 600);
+
+  let img = new Image();
+  img.src =
+    "https://img.freepik.com/free-photo/grey-felt-texture_1298-489.jpg?t=st=1738141993~exp=1738145593~hmac=65eedc5678010a11f397a261a9c13bd4050ac1213ef5905b72c2ab5844712004&w=740";
+  ctx.drawImage(img, 0, 0, 600, 600);
 
   objets.forEach((obj) => {
     if (obj.url) {
       if (!ctx) return;
+      ctx.save();
+      ctx.translate(obj.x / 2 + obj.width / 2, obj.y / 2 + obj.height / 2);
+      ctx.rotate((Math.PI / 180) * obj.angle);
       ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+      ctx.restore();
     }
   });
 }
@@ -155,7 +173,16 @@ function createImage(x: number, y: number, url: string) {
     if (!ctx) return;
     ctx.drawImage(img, x, y, 100, 100); //taille d'image 100px 100px
     //console.log(x,y,url)
-    objets.push({ x, y, url, selected: false, img, width: 100, height: 100 });
+    objets.push({
+      x,
+      y,
+      url,
+      selected: false,
+      img,
+      width: 100,
+      height: 100,
+      angle: 0,
+    });
 
     console.log(objets); // verifier les tableau
   };
@@ -258,6 +285,20 @@ function reduceImage() {
     drawCanvas();
   }
 }
+
+function rotateImageright() {
+  console.log("rotate");
+  if (currentObject) {
+    currentObject.angle += 10;
+  }
+}
+
+function rotateImageleft() {
+  console.log("rotate");
+  if (currentObject) {
+    currentObject.angle -= 10;
+  }
+}
 </script>
 
 <style scoped>
@@ -291,7 +332,7 @@ section {
 
   background-color: #fdf2e7;
   padding-top: 2rem;
-
+  margin-left: 2rem;
   margin-top: 0.5rem;
   height: 25rem;
   border-radius: 5px;
@@ -305,9 +346,9 @@ section {
 button {
   width: 4rem;
   height: 4rem;
-  margin: 2.5rem;
+  margin: 1.5rem;
   background-color: #fcf7f1;
-  border: #a8a6a6 solid 2px;
+  border: #b8b8b8 solid 2px;
   border-radius: 5px;
 }
 
