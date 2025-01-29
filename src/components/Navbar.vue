@@ -6,21 +6,16 @@
 
     <p class="title">Concevez votre espace</p>
 
-
     <div class="link">
       <router-link to="/Test">Go to Test</router-link>
     </div>
     <div class="link">
-      <router-link to="/Simulation">Go to Simulation</router-link>
+      <router-link to="/SimulationSalle">Go to Simulation</router-link>
     </div>
   </nav>
 </template>
 
-
-<script setup>
-</script>
-
-
+<script setup></script>
 
 <style scoped>
 .navbar {
@@ -31,7 +26,7 @@
 
 .logo a {
   font-size: 4rem;
-  font-weight: 800;   
+  font-weight: 800;
   color: #f2a65d;
   text-decoration: none;
 }

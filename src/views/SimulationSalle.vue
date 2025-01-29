@@ -1,59 +1,75 @@
 <template>
-  <h1>Page Simulation de salle</h1>
+  <section>
+    <h1>Page Simulation de salle</h1>
 
-  changer la taille de image selectioné
-  <button @click="expandImage">Image plus grand</button>
-  <button @click="reduceImage">Image plus petit</button>
-  <div class="flex">
-    <div class="blocBtn">
-      <button
-        @click="
-          createImage(
-            0,
-            5,
-            'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg?t=st=1737498123~exp=1737501723~hmac=fbcd6c63bfcf5138310baccf7453cd48fecf0ed933baef2b113d6f7323b4add4&w=826'
-          )
-        "
-      >
-        <img src="/src/assets/icon/table.png" alt="Button Table" />
-        Table
-      </button>
+    <div class="flex">
+      <div class="blocBtn">
+        <button
+          @click="
+            createImage(
+              0,
+              5,
+              'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg?t=st=1737498123~exp=1737501723~hmac=fbcd6c63bfcf5138310baccf7453cd48fecf0ed933baef2b113d6f7323b4add4&w=826'
+            )
+          "
+        >
+          <img src="/src/assets/icon/table.png" alt="Button Table" />
+          Table
+        </button>
 
-      <button
-        @click="
-          createImage(
-            100,
-            5,
-            'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826'
-          )
-        "
-      >
-        <img src="/src/assets/icon/chaise-de-bureau.png" alt="Button Chaise" />
-        Chaise
-      </button>
-      <button
-        @click="
-          createImage(
-            200,
-            5,
-            'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming'
-          )
-        "
-      >
-        <img src="/src/assets/icon/moniteur.png" alt="Button tv" />
-        TV
-      </button>
-      <button @click="clear">Clear</button>
+        <button
+          @click="
+            createImage(
+              100,
+              5,
+              'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826'
+            )
+          "
+        >
+          <img
+            src="/src/assets/icon/chaise-de-bureau.png"
+            alt="Button Chaise"
+          />
+          Chaise
+        </button>
+        <button
+          @click="
+            createImage(
+              200,
+              5,
+              'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming'
+            )
+          "
+        >
+          <img src="/src/assets/icon/moniteur.png" alt="Button tv" />
+          TV
+        </button>
+        <button @click="clear">Clear</button>
+      </div>
+
+      <canvas
+        ref="canvas"
+        class="canvas"
+        @mousedown="startDrag"
+        @mousemove="drag"
+        @mouseup="stopDrag"
+      ></canvas>
+
+      <div class="blocBtn_right">
+        <div class="flex">
+          <button @click="reduceImage" class="resizeBtn">-</button>
+          <p>Taille d'image</p>
+          <button @click="expandImage" class="resizeBtn">+</button>
+        </div>
+
+        <div class="flex">
+          <button @click="" class="resizeBtn">-</button>
+          <p>Rotate Image</p>
+          <button @click="" class="resizeBtn">+</button>
+        </div>
+      </div>
     </div>
-
-    <canvas
-      ref="canvas"
-      class="canvas"
-      @mousedown="startDrag"
-      @mousemove="drag"
-      @mouseup="stopDrag"
-    ></canvas>
-  </div>
+  </section>
 </template>
 
 <script lang="ts" setup>
@@ -244,18 +260,45 @@ function reduceImage() {
 </script>
 
 <style scoped>
-.flex {
-  width: 100vh;
+section {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
 }
 
 .blocBtn {
+  display: flex;
+  flex-direction: column;
+
   background-color: #fdf2e7;
-  padding: 1.5rem;
+  padding: 1rem;
   margin-right: 2rem;
   margin-top: 0.5rem;
   height: 35rem;
   border-radius: 5px;
+}
+
+.blocBtn_right {
+  display: flex;
+  flex-direction: column;
+
+  background-color: #fdf2e7;
+  padding-top: 2rem;
+
+  margin-top: 0.5rem;
+  height: 25rem;
+  border-radius: 5px;
+}
+
+.resizeBtn {
+  margin-top: 0rem;
+  font-size: 2rem;
 }
 
 button {
