@@ -44,6 +44,10 @@
         TV
       </button>
       <button @click="clear">Clear</button>
+      <button>
+        <img src="/src/assets/icon/save-icon.png" alt="Save Button">
+        Save
+      </button>
     </div>
 
     <canvas
@@ -241,11 +245,17 @@ function reduceImage() {
     drawCanvas();
   }
 }
+
+// function save to LocalStorage
+function saveToLocalStorage() {
+
+}
 </script>
 
 <style scoped>
 .flex {
   width: 100vh;
+  margin: 0 auto;
   display: flex;
 }
 
@@ -265,6 +275,10 @@ button {
   background-color: #fcf7f1;
   border: #a8a6a6 solid 2px;
   border-radius: 5px;
+}
+
+button:hover {
+  background-color: #c0b9b2;
 }
 
 img {
