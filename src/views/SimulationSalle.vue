@@ -414,13 +414,28 @@ img {
     objets.forEach((obj) => {
       if (obj.img) {
         if (!ctx) return;
-        ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+
+        ctx.save();
+        ctx.translate(obj.x, obj.y);
+
+        if (obj.width < 0) {
+          ctx.scale(-1, 1); // Appliquer une inversion horizontale
+        //ctx.drawImage(obj.img, -Math.abs(obj.width), 0, Math.abs(obj.width), obj.height);
+        ctx.drawImage(obj.img, obj.width, 0, -obj.width, obj.height);
+        } else {
+          ctx.drawImage(obj.img, 0, 0, obj.width, obj.height);
+        }
+
+        ctx.restore();
+
+        //ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
   
         // Ajouter une bordure rouge si l'objet est sélectionné
         if (obj.selected) {
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
-          ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+          //ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+          ctx.strokeRect(obj.x, obj.y, Math.abs(obj.width), obj.height);
         }
       }
     });
@@ -433,6 +448,7 @@ img {
   const img = new Image();
   img.src = url;
   img.onload = () => {
+    if(!ctx) return;
     ctx.drawImage(img, x, y, 100, 100);
     const newObject = {
       x,
@@ -451,8 +467,7 @@ img {
 }
 
   
- 
-  
+
   // Effacer le canvas et réinitialiser les objets
   function clear() {
     if (!ctx || !canvas.value) return;
@@ -501,9 +516,17 @@ img {
     const canvasPosition = canvas.value.getBoundingClientRect();
     const mouseX = event.clientX - canvasPosition.left;
     const mouseY = event.clientY - canvasPosition.top;
-  
+
+    if (currentObject.width < 0) {
+    currentObject.x = mouseX + currentObject.width / 2;
+  } else {
     currentObject.x = mouseX - currentObject.width / 2;
-    currentObject.y = mouseY - currentObject.height / 2;
+  }
+
+  currentObject.y = mouseY - currentObject.height / 2;
+  
+    // currentObject.x = mouseX - currentObject.width / 2;
+    // currentObject.y = mouseY - currentObject.height / 2;
   
     drawCanvas();
   }
@@ -532,33 +555,81 @@ img {
   }
 
    // Appliquer une symétrie horizontale à l'objet sélectionné
-   function flipHorizontal() {
-    if (!ctx || !canvas.value) {
-      console.error("Canvas ou contexte non initialisé.");
-      return;
-    }
+  //  function flipHorizontal() {
+  //   if (!ctx || !canvas.value) {
+  //     console.error("Canvas ou contexte non initialisé.");
+  //     return;
+  //   }
   
-    const targetObject = objets.find((obj) => obj.selected);
+  //   const targetObject = objets.find((obj) => obj.selected);
+
+  //   console.log("TARGET OBJ", targetObject);
   
-    if (!targetObject) {
-      console.error("Aucun objet sélectionné pour appliquer la symétrie horizontale.");
-      return;
-    }
+  //   if (!targetObject) {
+  //     console.error("Aucun objet sélectionné pour appliquer la symétrie horizontale.");
+  //     return;
+  //   }
   
-    const { x, y, img, width, height } = targetObject;
+  //   const { x, y, img, width, height } = targetObject;
+
+  //   console.log("avant transformation", { x, y, img, width, height });
   
-    // Effacer l'image originale
-    ctx.clearRect(x, y, width, height);
+  //   // Effacer l'image originale
+  //   ctx.clearRect(x, y, width, height);
   
-    // Appliquer une transformation pour inverser horizontalement
-    ctx.save();
-    ctx.translate(x + width, y); // Déplacer l'origine au bord droit
-    ctx.scale(-1, 1); // Appliquer la symétrie horizontale
-    ctx.drawImage(img, 0, 0, width, height); // Dessiner l'image inversée
-    ctx.restore();
+  //   //Appliquer une transformation pour inverser horizontalement
+  //   ctx.save();
+  //   ctx.translate(x + width, y); // Déplacer l'origine au bord droit
+  //   ctx.scale(-1, 1); // Appliquer la symétrie horizontale
+  //   ctx.drawImage(img, -width, 0, width, height); // Dessiner l'image inversée
+  //   ctx.restore();
+
+  //   console.log("Symétrie appliqué");
+
+  //    // Modifier directement l'objet sélectionné
+  // //targetObject.x = targetObject.x + targetObject.width; // Déplace l'objet après inversion
+  // //targetObject.width = -targetObject.width; // Inverser la largeur
+
+  // console.log("Nouvelle position après inversion :", targetObject);
   
-    drawCanvas();
+  //   drawCanvas();
+  // }
+
+  function flipHorizontal() {
+  if (!ctx || !canvas.value) {
+    console.error("Canvas ou contexte non initialisé.");
+    return;
   }
+
+  const targetObject = objets.find((obj) => obj.selected);
+
+  if (!targetObject) {
+    console.error("Aucun objet sélectionné pour appliquer la symétrie horizontale.");
+    return;
+  }
+
+  console.log("Avant transformation :", { ...targetObject });
+
+  // Modifier la position et inverser la largeur pour l'effet miroir
+  //targetObject.x = targetObject.x + targetObject.width; // Déplace l'objet après inversion
+  //targetObject.width = -targetObject.width; // Inverser la largeur pour effet miroir
+
+  targetObject.x += targetObject.width; // Déplace l'objet après inversion
+  targetObject.width *= -1; // Inverser la largeur
+
+  console.log("Après transformation :", { ...targetObject });
+
+  // Redessiner le canvas avec l'objet inversé
+  drawCanvas();
+
+  const canvasPosition = canvas.value.getBoundingClientRect();
+    const mouseX = event.clientX - canvasPosition.left;
+    const mouseY = event.clientY - canvasPosition.top;
+  
+    currentObject = getClickObjet(mouseX, mouseY);
+
+}
+
 
   </script>
   
