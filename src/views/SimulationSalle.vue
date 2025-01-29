@@ -303,152 +303,170 @@ img {
 </style> -->
 
 <template>
-    <h1>Page Simulation de salle</h1>
-  
-    <!-- Actions sur l'objet sélectionné -->
-    <button @click="expandImage">Image plus grande</button>
-    <button @click="reduceImage">Image plus petite</button>
-    <button @click="flipHorizontal">Symétrie horizontale</button>
-  
-    <div class="flex">
-      <div class="blocBtn">
-        <!-- Boutons pour ajouter des images -->
-        <button
-          @click="createImage(0, 5, 'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg')"
-        >
-          <img src="/src/assets/icon/table.png" alt="Button Table" />
-          Table
-        </button>
-  
-        <button
-          @click="createImage(100, 5, 'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg')"
-        >
-          <img src="/src/assets/icon/chaise-de-bureau.png" alt="Button Chaise" />
-          Chaise
-        </button>
-  
-        <button
-          @click="createImage(200, 5, 'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg')"
-        >
-          <img src="/src/assets/icon/moniteur.png" alt="Button TV" />
-          TV
-        </button>
-  
-        <button @click="clear">Clear</button>
-      </div>
-  
-      <!-- Canvas pour afficher les objets -->
-      <canvas
-        ref="canvas"
-        class="canvas"
-        @mousedown="startDrag"
-        @mousemove="drag"
-        @mouseup="stopDrag"
-      ></canvas>
+  <h1>Page Simulation de salle</h1>
+
+  <!-- Actions sur l'objet sélectionné -->
+  <button @click="expandImage">Image plus grande</button>
+  <button @click="reduceImage">Image plus petite</button>
+  <button @click="flipHorizontal">Symétrie horizontale</button>
+
+  <div class="flex">
+    <div class="blocBtn">
+      <!-- Boutons pour ajouter des images -->
+      <button
+        @click="
+          createImage(
+            0,
+            5,
+            'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg'
+          )
+        "
+      >
+        <img src="/src/assets/icon/table.png" alt="Button Table" />
+        Table
+      </button>
+
+      <button
+        @click="
+          createImage(
+            100,
+            5,
+            'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg'
+          )
+        "
+      >
+        <img src="/src/assets/icon/chaise-de-bureau.png" alt="Button Chaise" />
+        Chaise
+      </button>
+
+      <button
+        @click="
+          createImage(
+            200,
+            5,
+            'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg'
+          )
+        "
+      >
+        <img src="/src/assets/icon/moniteur.png" alt="Button TV" />
+        TV
+      </button>
+
+      <button @click="clear">Clear</button>
     </div>
-  </template>
-  
-  <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
-  
-  // Références au canvas et au contexte
-  const canvas = ref<HTMLCanvasElement | null>(null);
-  let ctx: CanvasRenderingContext2D | null = null;
-  
-  // Tableau des objets affichés sur le canvas
-  const objets: NewObjet[] = [];
-  
-  // Interface pour définir un objet sur le canvas
-  interface NewObjet {
-    x: number;
-    y: number;
-    url: string;
-    selected: boolean;
-    img: HTMLImageElement;
-    width: number;
-    height: number;
-  }
-  
-  let isDragging = false; // Indique si un objet est en cours de déplacement
-  let currentObject: NewObjet | null = null; // Objet actuellement sélectionné
-  
-  // Initialisation du canvas
-  onMounted(() => {
-    initCanvas();
-  });
-  
-  // Fonction pour initialiser le canvas
-  function initCanvas() {
-    if (!canvas.value) return;
-  
-    canvas.value.width = 1000;
-    canvas.value.height = 1000;
-  
-    ctx = canvas.value.getContext("2d");
-    if (!ctx) return;
-  
-    // Dessiner un arrière-plan gris
-    ctx.fillStyle = "gray";
-    ctx.fillRect(10, 10, 600, 600);
-  
-    // Démarrer la boucle d'animation
-    update();
-  }
-  
-  // Fonction pour mettre à jour le canvas
-  function update() {
-    drawCanvas();
-    requestAnimationFrame(update);
-  }
-  
-  // Dessiner tous les objets sur le canvas
-  function drawCanvas() {
-    if (!ctx || !canvas.value) return;
-  
-    // Effacer le canvas
-    ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-    ctx.fillStyle = "gray";
-    ctx.fillRect(10, 10, 600, 600);
-  
-    // Dessiner chaque objet
-    objets.forEach((obj) => {
-      if (obj.img) {
-        if (!ctx) return;
 
-        ctx.save();
-        ctx.translate(obj.x, obj.y);
+    <!-- Canvas pour afficher les objets -->
+    <canvas
+      ref="canvas"
+      class="canvas"
+      @mousedown="startDrag"
+      @mousemove="drag"
+      @mouseup="stopDrag"
+    ></canvas>
+  </div>
+</template>
 
-        if (obj.width < 0) {
-          ctx.scale(-1, 1); // Appliquer une inversion horizontale
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+
+// Références au canvas et au contexte
+const canvas = ref<HTMLCanvasElement | null>(null);
+let ctx: CanvasRenderingContext2D | null = null;
+
+// Tableau des objets affichés sur le canvas
+const objets: NewObjet[] = [];
+
+// Interface pour définir un objet sur le canvas
+interface NewObjet {
+  x: number;
+  y: number;
+  url: string;
+  selected: boolean;
+  img: HTMLImageElement;
+  width: number;
+  height: number;
+}
+
+let isDragging = false; // Indique si un objet est en cours de déplacement
+let currentObject: NewObjet | null = null; // Objet actuellement sélectionné
+
+// Initialisation du canvas
+onMounted(() => {
+  initCanvas();
+});
+
+// Fonction pour initialiser le canvas
+function initCanvas() {
+  if (!canvas.value) return;
+
+  canvas.value.width = 1000;
+  canvas.value.height = 1000;
+
+  ctx = canvas.value.getContext("2d");
+  if (!ctx) return;
+
+  // Dessiner un arrière-plan gris
+  ctx.fillStyle = "gray";
+  ctx.fillRect(10, 10, 600, 600);
+
+  // Démarrer la boucle d'animation
+  update();
+}
+
+// Fonction pour mettre à jour le canvas
+function update() {
+  drawCanvas();
+  requestAnimationFrame(update);
+}
+
+// Dessiner tous les objets sur le canvas
+function drawCanvas() {
+  if (!ctx || !canvas.value) return;
+
+  // Effacer le canvas
+  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+  ctx.fillStyle = "gray";
+  ctx.fillRect(10, 10, 600, 600);
+
+  // Dessiner chaque objet
+  objets.forEach((obj) => {
+    if (obj.img) {
+      if (!ctx) return;
+
+      ctx.save();
+      ctx.translate(obj.x, obj.y);
+
+      if (obj.width < 0) {
+        ctx.scale(-1, 1); // Appliquer une inversion horizontale
         //ctx.drawImage(obj.img, -Math.abs(obj.width), 0, Math.abs(obj.width), obj.height);
         ctx.drawImage(obj.img, obj.width, 0, -obj.width, obj.height);
-        } else {
-          ctx.drawImage(obj.img, 0, 0, obj.width, obj.height);
-        }
-
-        ctx.restore();
-
-        //ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
-  
-        // Ajouter une bordure rouge si l'objet est sélectionné
-        if (obj.selected) {
-          ctx.strokeStyle = "red";
-          ctx.lineWidth = 2;
-          //ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
-          ctx.strokeRect(obj.x, obj.y, Math.abs(obj.width), obj.height);
-        }
+      } else {
+        ctx.drawImage(obj.img, 0, 0, obj.width, obj.height);
       }
-    });
-  }
-  
-  // Ajouter une image au canvas
-  function createImage(x: number, y: number, url: string) {
+
+      ctx.restore();
+
+      //ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+
+      // Ajouter une bordure rouge si l'objet est sélectionné
+      if (obj.selected) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        //ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+        ctx.strokeRect(obj.x, obj.y, Math.abs(obj.width), obj.height);
+      }
+    }
+  });
+}
+
+// Ajouter une image au canvas
+function createImage(x: number, y: number, url: string) {
   if (!ctx || !canvas.value) return;
 
   const img = new Image();
   img.src = url;
   img.onload = () => {
-    if(!ctx) return;
+    if (!ctx) return;
     ctx.drawImage(img, x, y, 100, 100);
     const newObject = {
       x,
@@ -466,142 +484,140 @@ img {
   };
 }
 
-  
+// Effacer le canvas et réinitialiser les objets
+function clear() {
+  if (!ctx || !canvas.value) return;
 
-  // Effacer le canvas et réinitialiser les objets
-  function clear() {
-    if (!ctx || !canvas.value) return;
-  
-    ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-    ctx.fillStyle = "gray";
-    ctx.fillRect(10, 10, 600, 600);
-  
-    objets.length = 0; // Vider le tableau des objets
-  }
-  
-  // Détecter un clic sur un objet
-  function getClickObjet(x: number, y: number): NewObjet | null {
-    return (
-      objets.find(
-        (obj) =>
-          x >= obj.x &&
-          x <= obj.x + obj.width &&
-          y >= obj.y &&
-          y <= obj.y + obj.height
-      ) || null
-    );
-  }
-  
-  // Commencer à déplacer un objet
-  function startDrag(event: MouseEvent) {
-    if (!canvas.value) return;
-  
-    const canvasPosition = canvas.value.getBoundingClientRect();
-    const mouseX = event.clientX - canvasPosition.left;
-    const mouseY = event.clientY - canvasPosition.top;
-  
-    currentObject = getClickObjet(mouseX, mouseY);
-  
-    if (currentObject) {
-      objets.forEach((obj) => (obj.selected = false)); // Désélectionner tous les objets
-      currentObject.selected = true; // Marquer l'objet cliqué comme sélectionné
-      isDragging = true;
-    }
-  }
-  
-  // Déplacer un objet en cours de drag
-  function drag(event: MouseEvent) {
-    if (!isDragging || !currentObject || !canvas.value) return;
-  
-    const canvasPosition = canvas.value.getBoundingClientRect();
-    const mouseX = event.clientX - canvasPosition.left;
-    const mouseY = event.clientY - canvasPosition.top;
+  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+  ctx.fillStyle = "gray";
+  ctx.fillRect(10, 10, 600, 600);
 
-    if (currentObject.width < 0) {
+  objets.length = 0; // Vider le tableau des objets
+}
+
+// Détecter un clic sur un objet
+function getClickObjet(x: number, y: number): NewObjet | null {
+  return (
+    objets.find(
+      (obj) =>
+        x >= obj.x &&
+        x <= obj.x + obj.width &&
+        y >= obj.y &&
+        y <= obj.y + obj.height
+    ) || null
+  );
+}
+
+// Commencer à déplacer un objet
+function startDrag(event: MouseEvent) {
+  if (!canvas.value) return;
+
+  const canvasPosition = canvas.value.getBoundingClientRect();
+  const mouseX = event.clientX - canvasPosition.left;
+  const mouseY = event.clientY - canvasPosition.top;
+
+  currentObject = getClickObjet(mouseX, mouseY);
+
+  if (currentObject) {
+    objets.forEach((obj) => (obj.selected = false)); // Désélectionner tous les objets
+    currentObject.selected = true; // Marquer l'objet cliqué comme sélectionné
+    isDragging = true;
+  }
+}
+
+// Déplacer un objet en cours de drag
+function drag(event: MouseEvent) {
+  if (!isDragging || !currentObject || !canvas.value) return;
+
+  const canvasPosition = canvas.value.getBoundingClientRect();
+  const mouseX = event.clientX - canvasPosition.left;
+  const mouseY = event.clientY - canvasPosition.top;
+
+  if (currentObject.width < 0) {
     currentObject.x = mouseX + currentObject.width / 2;
   } else {
     currentObject.x = mouseX - currentObject.width / 2;
   }
 
   currentObject.y = mouseY - currentObject.height / 2;
-  
-    // currentObject.x = mouseX - currentObject.width / 2;
-    // currentObject.y = mouseY - currentObject.height / 2;
-  
+
+  // currentObject.x = mouseX - currentObject.width / 2;
+  // currentObject.y = mouseY - currentObject.height / 2;
+
+  drawCanvas();
+}
+
+// Arrêter de déplacer un objet
+function stopDrag() {
+  isDragging = false;
+}
+
+// Agrandir l'objet sélectionné
+function expandImage() {
+  if (currentObject) {
+    currentObject.width += 10;
+    currentObject.height += 10;
     drawCanvas();
   }
-  
-  // Arrêter de déplacer un objet
-  function stopDrag() {
-    isDragging = false;
+}
+
+// Réduire la taille de l'objet sélectionné
+function reduceImage() {
+  if (currentObject) {
+    currentObject.width -= 10;
+    currentObject.height -= 10;
+    drawCanvas();
   }
-  
-  // Agrandir l'objet sélectionné
-  function expandImage() {
-    if (currentObject) {
-      currentObject.width += 10;
-      currentObject.height += 10;
-      drawCanvas();
-    }
-  }
-  
-  // Réduire la taille de l'objet sélectionné
-  function reduceImage() {
-    if (currentObject) {
-      currentObject.width -= 10;
-      currentObject.height -= 10;
-      drawCanvas();
-    }
-  }
+}
 
-   // Appliquer une symétrie horizontale à l'objet sélectionné
-  //  function flipHorizontal() {
-  //   if (!ctx || !canvas.value) {
-  //     console.error("Canvas ou contexte non initialisé.");
-  //     return;
-  //   }
-  
-  //   const targetObject = objets.find((obj) => obj.selected);
+// Appliquer une symétrie horizontale à l'objet sélectionné
+//  function flipHorizontal() {
+//   if (!ctx || !canvas.value) {
+//     console.error("Canvas ou contexte non initialisé.");
+//     return;
+//   }
 
-  //   console.log("TARGET OBJ", targetObject);
-  
-  //   if (!targetObject) {
-  //     console.error("Aucun objet sélectionné pour appliquer la symétrie horizontale.");
-  //     return;
-  //   }
-  
-  //   const { x, y, img, width, height } = targetObject;
+//   const targetObject = objets.find((obj) => obj.selected);
 
-  //   console.log("avant transformation", { x, y, img, width, height });
-  
-  //   // Effacer l'image originale
-  //   ctx.clearRect(x, y, width, height);
-  
-  //   //Appliquer une transformation pour inverser horizontalement
-  //   ctx.save();
-  //   ctx.translate(x + width, y); // Déplacer l'origine au bord droit
-  //   ctx.scale(-1, 1); // Appliquer la symétrie horizontale
-  //   ctx.drawImage(img, -width, 0, width, height); // Dessiner l'image inversée
-  //   ctx.restore();
+//   console.log("TARGET OBJ", targetObject);
 
-  //   console.log("Symétrie appliqué");
+//   if (!targetObject) {
+//     console.error("Aucun objet sélectionné pour appliquer la symétrie horizontale.");
+//     return;
+//   }
 
-  //    // Modifier directement l'objet sélectionné
-  // //targetObject.x = targetObject.x + targetObject.width; // Déplace l'objet après inversion
-  // //targetObject.width = -targetObject.width; // Inverser la largeur
+//   const { x, y, img, width, height } = targetObject;
 
-  // console.log("Nouvelle position après inversion :", targetObject);
-  
-  //   drawCanvas();
-  // }
+//   console.log("avant transformation", { x, y, img, width, height });
 
-  function flipHorizontal() {
+//   // Effacer l'image originale
+//   ctx.clearRect(x, y, width, height);
+
+//   //Appliquer une transformation pour inverser horizontalement
+//   ctx.save();
+//   ctx.translate(x + width, y); // Déplacer l'origine au bord droit
+//   ctx.scale(-1, 1); // Appliquer la symétrie horizontale
+//   ctx.drawImage(img, -width, 0, width, height); // Dessiner l'image inversée
+//   ctx.restore();
+
+//   console.log("Symétrie appliqué");
+
+//    // Modifier directement l'objet sélectionné
+// //targetObject.x = targetObject.x + targetObject.width; // Déplace l'objet après inversion
+// //targetObject.width = -targetObject.width; // Inverser la largeur
+
+// console.log("Nouvelle position après inversion :", targetObject);
+
+//   drawCanvas();
+// }
+
+function flipHorizontal() {
   if (!ctx || !canvas.value) {
     console.error("Canvas ou contexte non initialisé.");
     return;
   }
 
-  const targetObject = objets.find((obj) => obj.selected);
+  /*  const targetObject = objets.find((obj) => obj.selected);
 
   if (!targetObject) {
     console.error("Aucun objet sélectionné pour appliquer la symétrie horizontale.");
@@ -618,45 +634,42 @@ img {
   targetObject.width *= -1; // Inverser la largeur
 
   console.log("Après transformation :", { ...targetObject });
+*/
+  if (currentObject) {
+    currentObject.x = currentObject.x + currentObject.width;
+    currentObject.width = -currentObject.width;
+    console.log(currentObject.width);
+    console.log(-currentObject.width);
+  }
 
   // Redessiner le canvas avec l'objet inversé
   drawCanvas();
+}
+</script>
 
-  const canvasPosition = canvas.value.getBoundingClientRect();
-    const mouseX = event.clientX - canvasPosition.left;
-    const mouseY = event.clientY - canvasPosition.top;
-  
-    currentObject = getClickObjet(mouseX, mouseY);
-
+<style scoped>
+.flex {
+  display: flex;
 }
 
+.blocBtn {
+  background-color: #fdf2e7;
+  padding: 1.5rem;
+  margin-right: 2rem;
+  height: 35rem;
+  border-radius: 5px;
+}
 
-  </script>
-  
-  <style scoped>
-  .flex {
-    display: flex;
-  }
-  
-  .blocBtn {
-    background-color: #fdf2e7;
-    padding: 1.5rem;
-    margin-right: 2rem;
-    height: 35rem;
-    border-radius: 5px;
-  }
-  
-  button {
-    width: 4rem;
-    height: 4rem;
-    margin: 2.5rem;
-    background-color: #fcf7f1;
-    border: 2px solid #a8a6a6;
-    border-radius: 5px;
-  }
-  
-  img {
-    width: 2rem;
-  }
-  </style>
-  
+button {
+  width: 4rem;
+  height: 4rem;
+  margin: 2.5rem;
+  background-color: #fcf7f1;
+  border: 2px solid #a8a6a6;
+  border-radius: 5px;
+}
+
+img {
+  width: 2rem;
+}
+</style>
