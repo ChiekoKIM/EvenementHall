@@ -103,15 +103,16 @@ function initCanvas() {
     return;
   }
 
-  canvas.value.width = 1000;
-  canvas.value.height = 1000;
+  canvas.value.width = 600;
+  canvas.value.height = 600;
 
   ctx = canvas.value.getContext("2d");
 
   if (!ctx) return;
 
   ctx.fillStyle = "gray";
-  ctx.fillRect(10, 10, 600, 600);
+  let rectongle = ctx.fillRect(10, 10, 600, 600);
+  console.log(rectongle);
 
   update();
 }
