@@ -154,10 +154,18 @@ function drawCanvas() {
     if (obj.url) {
       if (!ctx) return;
       ctx.save();
-      ctx.translate(obj.x / 2 + obj.width / 2, obj.y / 2 + obj.height / 2);
+      //ctx.translate(obj.x / 2 + obj.width / 2, obj.y / 2 + obj.height / 2);
       ctx.rotate((Math.PI / 180) * obj.angle);
       ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
       ctx.restore();
+
+      /* // Ajouter une bordure rouge si l'objet est sélectionné
+      if (obj.selected) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        //ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+        ctx.strokeRect(obj.x, obj.y, Math.abs(obj.width), obj.height);
+      }*/
     }
   });
 }
