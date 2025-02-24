@@ -8,16 +8,16 @@
 
 
     <div class="link">
-      <router-link to="/Test">Go to Test</router-link>
+      <router-link to="/Spaces">Vos espaces</router-link>
     </div>
     <div class="link">
-      <router-link to="/Simulation">Go to Simulation</router-link>
+      <router-link to="/Simulation">Simulation</router-link>
     </div>
   </nav>
 </template>
 
 
-<script setup>
+<script lang="ts" setup>
 </script>
 
 

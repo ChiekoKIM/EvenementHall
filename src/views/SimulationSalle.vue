@@ -256,6 +256,7 @@ function reduceImage() {
   margin-top: 0.5rem;
   height: 35rem;
   border-radius: 5px;
+  
 }
 
 button {

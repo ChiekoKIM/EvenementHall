@@ -3,13 +3,13 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 
 
 import HomeView from '../views/HomeView.vue'
-import Test from '../views/Test.vue'
 import SimulationSalle from '../views/SimulationSalle.vue'
+import Spaces from '../views/Spaces.vue'
 
 const routes = [
   { path: '/', component: HomeView },
-  { path: '/test', component: Test },
   { path: '/simulationsalle', component: SimulationSalle },
+  { path: '/spaces', component: Spaces },
 ]
 
 const router = createRouter({
