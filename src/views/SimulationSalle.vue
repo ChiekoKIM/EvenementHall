@@ -3,43 +3,48 @@
 
   <div class="flex">
     <div class="blocBtn">
-      <button
-        @click="
-          createImage(
-            0,
-            5,
-            'https://img.freepik.com/psd-gratuit/table-cafe-bois-ronde-moderne-jambes-coniques-meuble-decoration-interieur-design-minimaliste_632498-27809.jpg?t=st=1737498123~exp=1737501723~hmac=fbcd6c63bfcf5138310baccf7453cd48fecf0ed933baef2b113d6f7323b4add4&w=826'
-          )
-        "
-      >
-        <img src="/src/assets/icon/table.png" alt="Button Table" />
-        Table
-      </button>
+      <div class="flex">
+        <button
+          @click="createImage(0, 5, '/src/assets/elements/Round-Table-1.png')"
+        >
+          <img
+            src="/src/assets/elements/Round-Table-1.png"
+            alt="Button Table"
+          />
+          Table Rond
+        </button>
 
-      <button
-        @click="
-          createImage(
-            100,
-            5,
-            'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826'
-          )
-        "
-      >
-        <img src="/src/assets/icon/chaise-de-bureau.png" alt="Button Chaise" />
+        <button @click="createImage(0, 5, '/src/assets/elements/Table-1.png')">
+          <img src="/src/assets/elements/Table-1.png" alt="Button Table" />
+          Table
+        </button>
+      </div>
+
+      <button @click="createImage(100, 5, '/src/assets/elements/Seat-1.png')">
+        <img src="/src/assets/elements/Seat-1.png" alt="Button Chaise" />
         Chaise
       </button>
-      <button
-        @click="
-          createImage(
-            200,
-            5,
-            'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming'
-          )
-        "
-      >
-        <img src="/src/assets/icon/moniteur.png" alt="Button tv" />
+
+      <button @click="createImage(100, 5, '/src/assets/elements/Sofa-1.png')">
+        <img src="/src/assets/elements/Sofa-1.png" alt="Button Chaise" />
+        Canapé
+      </button>
+
+      <button @click="createImage(0, 5, '/src/assets/elements/Lamp-1.png')">
+        <img src="/src/assets/elements/Lamp-1.png" alt="Button Table" />
+        Lamp
+      </button>
+
+      <button @click="createImage(0, 5, '/src/assets/elements/Plant-1.png')">
+        <img src="/src/assets/elements/Plant-1.png/" alt="Button Table" />
+        Plant
+      </button>
+
+      <button @click="createImage(200, 5, '/src/assets/elements/Tv-1.png')">
+        <img src="/src/assets/elements/Tv-1.png" alt="Button tv" />
         TV
       </button>
+
       <button @click="clear">Clear</button>
       <button @click="saveToLocalStorage">
         <img src="/src/assets/icon/save-icon.png" alt="Save Button" />
@@ -57,13 +62,19 @@
 
     <div class="blocBtn">
       <div class="flex">
-        <button @click="expandImage">Image plus grand</button>
         <button @click="reduceImage">Image plus petit</button>
+        <button @click="expandImage">Image plus grand</button>
       </div>
 
       <div class="flex">
         <button @click="rotateImageLeft">Image rotate left</button>
         <button @click="rotateImageRight">Image rotate right</button>
+      </div>
+
+      <div class="flex">
+        <button @click="flipImageVertical">Flip Vertical</button>
+        <button @click="flipImageHorizontal">Flip Horizontal</button>
+        <button @click="FlipImageBack">Flip Back</button>
       </div>
     </div>
   </div>
@@ -86,6 +97,8 @@ interface NewObjet {
   width: number;
   height: number;
   angle: number;
+  flippedV: boolean;
+  flippedH: boolean;
 }
 
 let isDragging = false;
@@ -108,8 +121,8 @@ function initCanvas() {
     return;
   }
 
-  canvas.value.width = 700;
-  canvas.value.height = 700;
+  canvas.value.width = 650;
+  canvas.value.height = 650;
 
   ctx = canvas.value.getContext("2d");
 
@@ -141,7 +154,7 @@ function drawCanvas() {
   //Diaplay room rectongle
   let img = new Image();
   img.src =
-    "https://img.freepik.com/free-photo/grey-felt-texture_1298-489.jpg?t=st=1738141993~exp=1738145593~hmac=65eedc5678010a11f397a261a9c13bd4050ac1213ef5905b72c2ab5844712004&w=740";
+    "https://img.freepik.com/photos-gratuite/fond-plancher-bois-clair_53876-88843.jpg?t=st=1740407576~exp=1740411176~hmac=8e24ae97895aba3bcddd0197852f418554c386db60df424f6acd9b34a9fc3199&w=1060";
   ctx.drawImage(img, 0, 0, 600, 600);
 
   //draw images
@@ -150,14 +163,32 @@ function drawCanvas() {
 
     ctx.save();
     ctx.translate(obj.x + obj.width / 2, obj.y + obj.height / 2);
-    ctx.rotate((obj.angle * Math.PI) / 180);
+    ctx.rotate((obj.angle * Math.PI) / 180); // rotation de objet
+
+    //flip
+    if (obj?.flippedV) {
+      ctx.scale(1, -1);
+    }
+
+    if (obj?.flippedH) {
+      ctx.scale(-1, 1);
+    }
+
     ctx.drawImage(
       obj.img,
-      -obj.width / 2, // Offset by half width
-      -obj.height / 2, // Offset by half height
+      -obj.width / 2,
+      -obj.height / 2,
       obj.width,
       obj.height
     );
+
+    // Ajout du contour (stroke) si l'objet est sélectionné
+    if (obj.selected) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "orange";
+      ctx.strokeRect(-obj.width / 2, -obj.height / 2, obj.width, obj.height);
+    }
+
     ctx.restore();
 
     //Afficher un image
@@ -167,13 +198,6 @@ function drawCanvas() {
       ctx.fillStyle = "red";
       ctx.fillRect(obj.x, obj.y, obj.width, obj.height); // si il n'y a pas url afficher carre rouge
     }*/
-
-    // Ajout du contour (stroke) si l'objet est sélectionné
-    if (obj.selected) {
-      ctx.lineWidth = 3; // Épaisseur du contour
-      ctx.strokeStyle = "orange"; // Couleur du contour
-      ctx.strokeRect(obj.x, obj.y, obj.width, obj.height); // Dessiner le contour
-    }
   });
 }
 
@@ -198,6 +222,8 @@ function createImage(x: number, y: number, url: string) {
       width: 100,
       height: 100,
       angle: 0,
+      flippedV: false,
+      flippedH: false,
     });
 
     console.log(objets); // verifier les tableau
@@ -313,10 +339,32 @@ function rotateImageRight() {
 }
 
 function rotateImageLeft() {
-  console.log("rotate");
   if (currentObject) {
     currentObject.angle -= 10;
   }
+}
+
+function flipImageVertical() {
+  if (!ctx || !canvas.value || !currentObject) return;
+
+  currentObject.flippedV = !currentObject.flippedV;
+}
+
+// ERROR
+function flipImageHorizontal() {
+  if (!ctx || !canvas.value || !currentObject) return;
+  console.log(currentObject);
+
+  currentObject.flippedV = !currentObject.flippedV;
+}
+
+function FlipImageBack() {
+  if (!ctx || !canvas.value || !currentObject) return;
+
+  console.log(currentObject);
+  console.log(currentObject.url);
+  currentObject.url = "/src/assets/elements/Sofa-1.png";
+  console.log(currentObject.url);
 }
 
 // function save to LocalStorage
@@ -367,10 +415,10 @@ function saveToLocalStorage() {
 
 .blocBtn {
   background-color: #fdf2e7;
-  padding: 1.5rem;
+  padding: 1 rem;
   margin-right: 2rem;
   margin-top: 0.5rem;
-  height: 35rem;
+  /*height: 50rem;*/
   border-radius: 5px;
 }
 
