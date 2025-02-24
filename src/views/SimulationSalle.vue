@@ -1,9 +1,6 @@
 <template>
   <h1>Page Simulation de salle</h1>
 
-  changer la taille de image selectioné
-  <button @click="expandImage">Image plus grand</button>
-  <button @click="reduceImage">Image plus petit</button>
   <div class="flex">
     <div class="blocBtn">
       <button
@@ -45,7 +42,7 @@
       </button>
       <button @click="clear">Clear</button>
       <button @click="saveToLocalStorage">
-        <img src="/src/assets/icon/save-icon.png" alt="Save Button">
+        <img src="/src/assets/icon/save-icon.png" alt="Save Button" />
         Save
       </button>
     </div>
@@ -57,6 +54,18 @@
       @mousemove="drag"
       @mouseup="stopDrag"
     ></canvas>
+
+    <div class="blocBtn">
+      <div class="flex">
+        <button @click="expandImage">Image plus grand</button>
+        <button @click="reduceImage">Image plus petit</button>
+      </div>
+
+      <div class="flex">
+        <button @click="rotateImageLeft">Image rotate left</button>
+        <button @click="rotateImageRight">Image rotate right</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -71,11 +80,12 @@ const objets: NewObjet[] = []; // NewObjet = 1 image = un article ajouté au can
 interface NewObjet {
   x: number;
   y: number;
-  url?: string;
+  url: string;
   selected: boolean;
   img: HTMLImageElement;
   width: number;
   height: number;
+  angle: number;
 }
 
 let isDragging = false;
@@ -83,13 +93,13 @@ let currentObject: NewObjet | null = null;
 
 //Initialisation dessine rectongle gray
 onMounted(() => {
-  loadSavedCanvas()
+  loadSavedCanvas();
   initCanvas();
 });
 
 function loadSavedCanvas() {
-  let saved = localStorage.getItem("savedCanvases")
-  let savedCanvases = saved ? JSON.parse(saved) : []
+  let saved = localStorage.getItem("savedCanvases");
+  let savedCanvases = saved ? JSON.parse(saved) : [];
   console.log(savedCanvases);
 }
 
@@ -98,8 +108,8 @@ function initCanvas() {
     return;
   }
 
-  canvas.value.width = 1000;
-  canvas.value.height = 1000;
+  canvas.value.width = 700;
+  canvas.value.height = 700;
 
   ctx = canvas.value.getContext("2d");
 
@@ -119,7 +129,6 @@ function update() {
 
 // redessiner un carre et des objets
 function drawCanvas() {
-  //const canvas = document.querySelector('.canvas') as HTMLCanvasElement | null;
   if (!canvas.value) {
     return;
   }
@@ -127,20 +136,47 @@ function drawCanvas() {
   if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-  ctx.fillStyle = "gray";
-  ctx.fillRect(10, 10, 600, 600);
+  /*ctx.fillStyle = "gray";
+  ctx.fillRect(10, 10, 600, 600);*/
+  //Diaplay room rectongle
+  let img = new Image();
+  img.src =
+    "https://img.freepik.com/free-photo/grey-felt-texture_1298-489.jpg?t=st=1738141993~exp=1738145593~hmac=65eedc5678010a11f397a261a9c13bd4050ac1213ef5905b72c2ab5844712004&w=740";
+  ctx.drawImage(img, 0, 0, 600, 600);
 
+  //draw images
   objets.forEach((obj) => {
     if (!ctx) return;
-    if (obj.url) {
-      ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
-    }
-    else {
+
+    ctx.save();
+    ctx.translate(obj.x + obj.width / 2, obj.y + obj.height / 2);
+    ctx.rotate((obj.angle * Math.PI) / 180);
+    ctx.drawImage(
+      obj.img,
+      -obj.width / 2, // Offset by half width
+      -obj.height / 2, // Offset by half height
+      obj.width,
+      obj.height
+    );
+    ctx.restore();
+
+    //Afficher un image
+    /*if (obj.url) {
+      ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height); // si il y a url affiche Imaga
+    } else {
       ctx.fillStyle = "red";
-      ctx.fillRect(obj.x, obj.y, obj.width, obj.height)
+      ctx.fillRect(obj.x, obj.y, obj.width, obj.height); // si il n'y a pas url afficher carre rouge
+    }*/
+
+    // Ajout du contour (stroke) si l'objet est sélectionné
+    if (obj.selected) {
+      ctx.lineWidth = 3; // Épaisseur du contour
+      ctx.strokeStyle = "orange"; // Couleur du contour
+      ctx.strokeRect(obj.x, obj.y, obj.width, obj.height); // Dessiner le contour
     }
   });
 }
+
 // function pour button afficher des images sur canvas
 function createImage(x: number, y: number, url: string) {
   if (!canvas) {
@@ -153,7 +189,16 @@ function createImage(x: number, y: number, url: string) {
     if (!ctx) return;
     ctx.drawImage(img, x, y, 100, 100); //taille d'image 100px 100px
     //console.log(x,y,url)
-    objets.push({ x, y, url, selected: false, img, width: 100, height: 100 });
+    objets.push({
+      x,
+      y,
+      url,
+      selected: false,
+      img,
+      width: 100,
+      height: 100,
+      angle: 0,
+    });
 
     console.log(objets); // verifier les tableau
   };
@@ -175,8 +220,6 @@ function clear() {
 
 /// startdrug -> detecter INDEX
 function startDrag(event: MouseEvent) {
-  console.log("start drag");
-
   if (!canvas.value) {
     return;
   }
@@ -185,6 +228,11 @@ function startDrag(event: MouseEvent) {
 
   const mouseX = event.clientX - canvasPosition.left;
   const mouseY = event.clientY - canvasPosition.top;
+
+  //initialiser valeur selected
+  objets.forEach((objet) => {
+    objet.selected = false;
+  });
 
   currentObject = getClickObjet(mouseX, mouseY); // image detecté = currentObjet
 
@@ -233,6 +281,7 @@ function drag(event: MouseEvent) {
 
 function stopDrag() {
   isDragging = false;
+
   //console.log("stop drug")
   //console.log(isDragging) // false
 }
@@ -242,7 +291,6 @@ function expandImage() {
   if (currentObject) {
     currentObject.width += 10;
     currentObject.height += 10;
-    console.log(currentObject.width);
     drawCanvas();
   }
 }
@@ -257,25 +305,40 @@ function reduceImage() {
   }
 }
 
+function rotateImageRight() {
+  console.log("rotate");
+  if (currentObject) {
+    currentObject.angle += 10;
+  }
+}
+
+function rotateImageLeft() {
+  console.log("rotate");
+  if (currentObject) {
+    currentObject.angle -= 10;
+  }
+}
+
 // function save to LocalStorage
 function saveToLocalStorage() {
-
   if (objets.length === 0) {
-    alert("Aucun objet à sauvegarder !")
+    alert("Aucun objet à sauvegarder !");
     return;
   }
 
-  const name = prompt("Nom de la configuration du canvas :")
+  const name = prompt("Nom de la configuration du canvas :");
   if (!name) return;
 
   // Récupérer les configurations existantes
-  let saved = localStorage.getItem("savedCanvases")
-  let savedCanvases = saved ? JSON.parse(saved) : []
+  let saved = localStorage.getItem("savedCanvases");
+  let savedCanvases = saved ? JSON.parse(saved) : [];
 
   // Vérifier si un canvas avec ce nom existe déjà
-  const nameExists = savedCanvases.some((config: any) => config.name === name)
+  const nameExists = savedCanvases.some((config: any) => config.name === name);
   if (nameExists) {
-    alert("Une configuration avec ce nom existe déjà. Veuillez choisir un autre nom.")
+    alert(
+      "Une configuration avec ce nom existe déjà. Veuillez choisir un autre nom."
+    );
     return;
   }
 
@@ -287,18 +350,17 @@ function saveToLocalStorage() {
   };
 
   // Ajouter la nouvelle configuration et sauvegarder
-  savedCanvases.push(newConfig)
-  console.log(savedCanvases)
+  savedCanvases.push(newConfig);
+  console.log(savedCanvases);
 
   localStorage.setItem("savedCanvases", JSON.stringify(savedCanvases)); // Enregistrement dans LocalStorage
 
-  alert("Configuration sauvegardée !")
+  alert("Configuration sauvegardée !");
 }
 </script>
 
 <style scoped>
 .flex {
-  width: 100vh;
   margin: 0 auto;
   display: flex;
 }
