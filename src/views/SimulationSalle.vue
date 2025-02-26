@@ -110,7 +110,15 @@
           <p>Flip Horizontal</p>
         </button>
       </div>
-      <button @click="FlipImageBack">Flip Back</button>
+      <div class="flex">
+        <button @click="FlipImageBack">
+          <p>Flip Back</p>
+          Flip Back
+        </button>
+        <button @click="deleteUnElement">
+          <p>Effacer Element Selectioné</p>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -385,7 +393,6 @@ function flipImageVertical() {
   currentObject.flippedV = !currentObject.flippedV;
 }
 
-// ERROR
 function flipImageHorizontal() {
   if (!ctx || !canvas.value || !currentObject) return;
   console.log(currentObject);
@@ -393,6 +400,7 @@ function flipImageHorizontal() {
   currentObject.flippedH = !currentObject.flippedH;
 }
 
+// ERROR
 function FlipImageBack() {
   if (!ctx || !canvas.value || !currentObject) return;
 
@@ -400,6 +408,18 @@ function FlipImageBack() {
   console.log(currentObject.url);
   currentObject.url = "/src/assets/elements/Sofa-1.png";
   console.log(currentObject.url);
+}
+
+function deleteUnElement() {
+  if (!currentObject) return;
+
+  const index = objets.findIndex((obj) => obj === currentObject);
+
+  // Si il trouve objet dans un listDeObjets => Delete
+  if (index !== -1) {
+    objets.splice(index, 1);
+    currentObject = null; //initialiser la valeur de currentObjet
+  }
 }
 
 // function save to LocalStorage
@@ -484,6 +504,7 @@ img {
 
 .icon {
   width: 2.3rem;
+  color: #ee7fb5;
 }
 
 p {
@@ -498,9 +519,8 @@ p {
 .title {
   font-size: 1rem;
   font-weight: bold;
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
-
 canvas {
   margin-top: 5rem;
 }
