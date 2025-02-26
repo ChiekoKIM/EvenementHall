@@ -1,8 +1,7 @@
 <template>
-  <h1>Page Simulation de salle</h1>
-
   <div class="flex">
     <div class="blocBtn">
+      <p class="title">Elements</p>
       <div class="flex">
         <button
           @click="createImage(0, 5, '/src/assets/elements/Round-Table-1.png')"
@@ -11,45 +10,64 @@
             src="/src/assets/elements/Round-Table-1.png"
             alt="Button Table"
           />
-          Table Rond
+          <p>Table Rond</p>
         </button>
 
         <button @click="createImage(0, 5, '/src/assets/elements/Table-1.png')">
-          <img src="/src/assets/elements/Table-1.png" alt="Button Table" />
-          Table
+          <img src="/src/assets/elements/Table-1.png" />
+          <p>Table Carré</p>
         </button>
       </div>
 
-      <button @click="createImage(100, 5, '/src/assets/elements/Seat-1.png')">
-        <img src="/src/assets/elements/Seat-1.png" alt="Button Chaise" />
-        Chaise
-      </button>
+      <div class="flex">
+        <button @click="createImage(100, 5, '/src/assets/elements/Seat-1.png')">
+          <img src="/src/assets/elements/Seat-1.png" />
+          <p>Chaise</p>
+        </button>
 
-      <button @click="createImage(100, 5, '/src/assets/elements/Sofa-1.png')">
-        <img src="/src/assets/elements/Sofa-1.png" alt="Button Chaise" />
-        Canapé
-      </button>
+        <button @click="createImage(100, 5, '/src/assets/elements/Sofa-1.png')">
+          <img src="/src/assets/elements/Sofa-1.png" />
+          <p>Canapé</p>
+        </button>
+      </div>
 
-      <button @click="createImage(0, 5, '/src/assets/elements/Lamp-1.png')">
-        <img src="/src/assets/elements/Lamp-1.png" alt="Button Table" />
-        Lamp
-      </button>
+      <div class="flex">
+        <button @click="createImage(0, 5, '/src/assets/elements/Lamp-1.png')">
+          <img src="/src/assets/elements/Lamp-1.png" />
+          <p>Lamp</p>
+        </button>
 
-      <button @click="createImage(0, 5, '/src/assets/elements/Plant-1.png')">
-        <img src="/src/assets/elements/Plant-1.png/" alt="Button Table" />
-        Plant
-      </button>
+        <button @click="createImage(0, 5, '/src/assets/elements/Plant-1.png')">
+          <img src="/src/assets/elements/Plant-1.png/" id="plantImg" />
+          <p>Plant</p>
+        </button>
+      </div>
 
-      <button @click="createImage(200, 5, '/src/assets/elements/Tv-1.png')">
-        <img src="/src/assets/elements/Tv-1.png" alt="Button tv" />
-        TV
-      </button>
+      <div class="flex">
+        <button @click="createImage(200, 5, '/src/assets/elements/Tv-1.png')">
+          <img src="/src/assets/elements/Tv-1.png" alt="Button tv" />
+          <p>TV</p>
+        </button>
+      </div>
 
-      <button @click="clear">Clear</button>
-      <button @click="saveToLocalStorage">
-        <img src="/src/assets/icon/save-icon.png" alt="Save Button" />
-        Save
-      </button>
+      <div class="flex">
+        <button @click="clear">
+          <img
+            src="/src/assets/icon/supprimer.png"
+            alt="Save Button"
+            class="icon"
+          />
+          <p>Tous effacer</p>
+        </button>
+        <button @click="saveToLocalStorage">
+          <img
+            src="/src/assets/icon/save-icon.png"
+            alt="Save Button"
+            class="icon"
+          />
+          <p>Save</p>
+        </button>
+      </div>
     </div>
 
     <canvas
@@ -61,21 +79,38 @@
     ></canvas>
 
     <div class="blocBtn">
+      <p class="title">Taille image</p>
       <div class="flex">
-        <button @click="reduceImage">Image plus petit</button>
-        <button @click="expandImage">Image plus grand</button>
+        <button @click="reduceImage">
+          <img src="/src/assets/icon/moins.png" class="icon" />
+        </button>
+        <button @click="expandImage">
+          <img src="/src/assets/icon/plus.png" class="icon" />
+        </button>
       </div>
 
+      <p class="title">Taille image</p>
       <div class="flex">
-        <button @click="rotateImageLeft">Image rotate left</button>
-        <button @click="rotateImageRight">Image rotate right</button>
+        <button @click="rotateImageLeft">
+          <img src="/src/assets/icon/fleche-left.png" class="icon" />
+        </button>
+        <button @click="rotateImageRight">
+          <img src="/src/assets/icon/fleche-right.png" class="icon" />
+        </button>
       </div>
 
+      <p class="title">Taille image</p>
       <div class="flex">
-        <button @click="flipImageVertical">Flip Vertical</button>
-        <button @click="flipImageHorizontal">Flip Horizontal</button>
-        <button @click="FlipImageBack">Flip Back</button>
+        <button @click="flipImageVertical">
+          <img src="/src/assets/icon/verticale.png" class="icon" />
+          <p>Flip Vertical</p>
+        </button>
+        <button @click="flipImageHorizontal">
+          <img src="/src/assets/icon/horizontal.png" class="icon" />
+          <p>Flip Horizontal</p>
+        </button>
       </div>
+      <button @click="FlipImageBack">Flip Back</button>
     </div>
   </div>
 </template>
@@ -184,7 +219,7 @@ function drawCanvas() {
 
     // Ajout du contour (stroke) si l'objet est sélectionné
     if (obj.selected) {
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 5;
       ctx.strokeStyle = "orange";
       ctx.strokeRect(-obj.width / 2, -obj.height / 2, obj.width, obj.height);
     }
@@ -355,7 +390,7 @@ function flipImageHorizontal() {
   if (!ctx || !canvas.value || !currentObject) return;
   console.log(currentObject);
 
-  currentObject.flippedV = !currentObject.flippedV;
+  currentObject.flippedH = !currentObject.flippedH;
 }
 
 function FlipImageBack() {
@@ -414,20 +449,26 @@ function saveToLocalStorage() {
 }
 
 .blocBtn {
-  background-color: #fdf2e7;
+  /*background-color: #fdf2e7;*/
   padding: 1 rem;
-  margin-right: 2rem;
-  margin-top: 0.5rem;
-  /*height: 50rem;*/
+  margin: 2.5rem;
+  background-color: #ffffff;
+  border: 3px solid #ee7fb5;
   border-radius: 5px;
 }
 
 button {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+
   width: 4rem;
   height: 4rem;
-  margin: 2.5rem;
-  background-color: #fcf7f1;
-  border: #a8a6a6 solid 2px;
+  margin: 1.5rem;
+  background-color: #ffffff;
+  border: none;
+  /*border: #a8a6a6 solid 2px;*/
   border-radius: 5px;
 }
 
@@ -436,6 +477,35 @@ button:hover {
 }
 
 img {
-  width: 2rem;
+  width: 3.3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.icon {
+  width: 2.3rem;
+}
+
+p {
+  font-size: 0.8rem;
+  color: #ee7fb5;
+  margin-bottom: 0rem;
+  font-family: "Rhodium Libre", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 3rem;
+}
+
+canvas {
+  margin-top: 5rem;
+}
+
+#plantImg {
+  width: 4rem;
 }
 </style>
