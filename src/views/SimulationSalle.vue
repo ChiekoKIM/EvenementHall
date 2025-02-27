@@ -68,35 +68,6 @@
           <p>Save</p>
         </button>
       </div>
-      <!--<button
-        @click="
-          createImage(
-            100,
-            5,
-            'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826'
-          )
-        "
-      >
-        <img src="/src/assets/icon/chaise-de-bureau.png" alt="Button Chaise" />
-        Chaise
-      </button>
-      <button
-        @click="
-          createImage(
-            200,
-            5,
-            'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming'
-          )
-        "
-      >
-        <img src="/src/assets/icon/moniteur.png" alt="Button tv" />
-        TV
-      </button>
-      <button @click="clear">Clear</button>
-      <button @click="saveToLocalStorage(config)">
-        <img src="/src/assets/icon/save-icon.png" alt="Save Button" />
-        Save</button
-      >-->
     </div>
 
     <canvas
@@ -160,21 +131,7 @@ import { saveConfig } from "../services/save";
 const canvas = ref<HTMLCanvasElement | null>(null);
 let ctx: CanvasRenderingContext2D | null = null;
 
-/*interface NewObjet {
-  x: number;
-  y: number;
-  url: string;
-  selected: boolean;
-  img: HTMLImageElement;
-  width: number;
-  height: number;
-  angle: number;
-  flippedV: boolean;
-  flippedH: boolean;
-}*/
-
 const config: NewObject[] = []; // NewObjet = 1 image = un article ajouté au canva
-/*const objets: NewObjet[] = []; // NewObjet = 1 image = un article ajouté au canva*/
 
 let isDragging = false;
 let currentObject: NewObject | null = null;
@@ -226,6 +183,7 @@ function drawCanvas() {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
   /*ctx.fillStyle = "gray";
   ctx.fillRect(10, 10, 600, 600);*/
+
   //Diaplay room rectongle
   let img = new Image();
   img.src =
@@ -264,14 +222,6 @@ function drawCanvas() {
     }
 
     ctx.restore();
-
-    //Afficher un image
-    /*if (obj.url) {
-      ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height); // si il y a url affiche Imaga
-    } else {
-      ctx.fillStyle = "red";
-      ctx.fillRect(obj.x, obj.y, obj.width, obj.height); // si il n'y a pas url afficher carre rouge
-    }*/
   });
 }
 
@@ -286,19 +236,7 @@ function createImage(x: number, y: number, url: string) {
   img.onload = () => {
     if (!ctx) return;
     ctx.drawImage(img, x, y, 100, 100); //taille d'image 100px 100px
-    //console.log(x,y,url)
-    /*config.push({
-      x,
-      y,
-      url,
-      selected: false,
-      img,
-      width: 100,
-      height: 100,
-      angle: 0,
-      flippedV: false,
-      flippedH: false,
-    });*/
+
     config.push({
       x,
       y,
@@ -376,9 +314,6 @@ function getClickObjet(x: number, y: number) {
 
 // Drag et déplacer des element /
 function drag(event: MouseEvent) {
-  //console.log("mousedown")
-  //console.log(isDragging) // true
-
   if (canvas.value && isDragging && currentObject) {
     const canvasPosition = canvas.value.getBoundingClientRect();
     const mouseX = event.clientX - canvasPosition.left;
@@ -393,9 +328,6 @@ function drag(event: MouseEvent) {
 
 function stopDrag() {
   isDragging = false;
-
-  //console.log("stop drug")
-  //console.log(isDragging) // false
 }
 
 // function grandir des image
@@ -464,68 +396,6 @@ function deleteUnElement() {
     currentObject = null; //initialiser la valeur de currentObjet
   }
 }
-/*
-// function save to LocalStorage
-function saveToLocalStorage() {
-  if (config.length === 0) {
-    alert("Aucun objet à sauvegarder !");
-    return;
-  }
-
-  const name = prompt("Nom de la configuration du canvas :");
-  if (!name) return;
-
-  // Récupérer les configurations existantes
-  let saved = localStorage.getItem("savedCanvases");
-  let savedCanvases = saved ? JSON.parse(saved) : [];
-
-  // Vérifier si un canvas avec ce nom existe déjà
-  const nameExists = savedCanvases.some((config: any) => config.name === name);
-  if (nameExists) {
-    alert(
-      "Une configuration avec ce nom existe déjà. Veuillez choisir un autre nom."
-    );
-    return;
-  }
-*/
-
-// function save to LocalStorage
-// function saveToLocalStorage() {
-
-//   if (config.length === 0) {
-//     alert("Aucun objet à sauvegarder !")
-//     return;
-//   }
-
-//   const name = prompt("Nom de la configuration du canvas :")
-//   if (!name) return;
-
-//   // Récupérer les configurations existantes
-//   let saved = localStorage.getItem("savedCanvases")
-//   let savedCanvases = saved ? JSON.parse(saved) : []
-
-//   // Vérifier si un canvas avec ce nom existe déjà
-//   const nameExists = savedCanvases.some((config: any) => config.name === name)
-//   if (nameExists) {
-//     alert("Une configuration avec ce nom existe déjà. Veuillez choisir un autre nom.")
-//     return;
-//   }
-
-//   // Créer une configuration avec un ID unique
-//   const newConfig = {
-//     id: Date.now(),
-//     name,
-//     objects: [...config], // Sauvegarde une copie des config actuels
-//   };
-
-//   // Ajouter la nouvelle configuration et sauvegarder
-//   savedCanvases.push(newConfig)
-//   console.log(savedCanvases)
-
-//   localStorage.setItem("savedCanvases", JSON.stringify(savedCanvases)); // Enregistrement dans LocalStorage
-
-//   alert("Configuration sauvegardée !")
-// }
 </script>
 
 <style scoped>
