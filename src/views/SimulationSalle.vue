@@ -68,7 +68,7 @@
           <p>Save</p>
         </button>
       </div>
-      <button
+      <!--<button
         @click="
           createImage(
             100,
@@ -95,8 +95,8 @@
       <button @click="clear">Clear</button>
       <button @click="saveToLocalStorage(config)">
         <img src="/src/assets/icon/save-icon.png" alt="Save Button" />
-        Save
-      </button>
+        Save</button
+      >-->
     </div>
 
     <canvas
