@@ -164,8 +164,8 @@ function initCanvas() {
     return;
   }
 
-  canvas.value.width = 650;
-  canvas.value.height = 650;
+  canvas.value.width = 600;
+  canvas.value.height = 600;
 
   ctx = canvas.value.getContext("2d");
 
@@ -522,7 +522,7 @@ p {
   margin-top: 2rem;
 }
 canvas {
-  margin-top: 5rem;
+  margin-top: 2.5rem;
 }
 
 #plantImg {
