@@ -59,7 +59,7 @@
           />
           <p>Tous effacer</p>
         </button>
-        <button @click="saveToLocalStorage">
+        <button @click="saveToLocalStorage(config)">
           <img
             src="/src/assets/icon/save-icon.png"
             alt="Save Button"
@@ -68,6 +68,35 @@
           <p>Save</p>
         </button>
       </div>
+      <button
+        @click="
+          createImage(
+            100,
+            5,
+            'https://img.freepik.com/psd-gratuit/chaise-bascule-moderne-tissu-gris-cadre-bois_191095-91556.jpg?t=st=1737497866~exp=1737501466~hmac=c4a21514ea924fe5fca673ebe7188bfa5aa526397bcf7ac33447ee50d3fe5f3e&w=826'
+          )
+        "
+      >
+        <img src="/src/assets/icon/chaise-de-bureau.png" alt="Button Chaise" />
+        Chaise
+      </button>
+      <button
+        @click="
+          createImage(
+            200,
+            5,
+            'https://img.freepik.com/vecteurs-libre/illustration-icone-vecteur-dessin-anime-television-heureux-mignon-concept-icone-objet-technologique-isole-plat_138676-6868.jpg?uid=R122294565&ga=GA1.1.888465932.1737135737&semt=ais_incoming'
+          )
+        "
+      >
+        <img src="/src/assets/icon/moniteur.png" alt="Button tv" />
+        TV
+      </button>
+      <button @click="clear">Clear</button>
+      <button @click="saveToLocalStorage(config)">
+        <img src="/src/assets/icon/save-icon.png" alt="Save Button" />
+        Save
+      </button>
     </div>
 
     <canvas
@@ -125,13 +154,13 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
+import type { NewObject } from "../types/NewObject.type";
+import { saveToLocalStorage } from "../services/saveTLS";
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 let ctx: CanvasRenderingContext2D | null = null;
 
-const objets: NewObjet[] = []; // NewObjet = 1 image = un article ajouté au canva
-
-interface NewObjet {
+/*interface NewObjet {
   x: number;
   y: number;
   url: string;
@@ -142,10 +171,13 @@ interface NewObjet {
   angle: number;
   flippedV: boolean;
   flippedH: boolean;
-}
+}*/
+
+const config: NewObject[] = []; // NewObjet = 1 image = un article ajouté au canva
+/*const objets: NewObjet[] = []; // NewObjet = 1 image = un article ajouté au canva*/
 
 let isDragging = false;
-let currentObject: NewObjet | null = null;
+let currentObject: NewObject | null = null;
 
 //Initialisation dessine rectongle gray
 onMounted(() => {
@@ -183,7 +215,7 @@ function update() {
   let animation = requestAnimationFrame(update);
 }
 
-// redessiner un carre et des objets
+// redessiner un carre et des config
 function drawCanvas() {
   if (!canvas.value) {
     return;
@@ -200,8 +232,7 @@ function drawCanvas() {
     "https://img.freepik.com/photos-gratuite/fond-plancher-bois-clair_53876-88843.jpg?t=st=1740407576~exp=1740411176~hmac=8e24ae97895aba3bcddd0197852f418554c386db60df424f6acd9b34a9fc3199&w=1060";
   ctx.drawImage(img, 0, 0, 600, 600);
 
-  //draw images
-  objets.forEach((obj) => {
+  config.forEach((obj) => {
     if (!ctx) return;
 
     ctx.save();
@@ -256,7 +287,19 @@ function createImage(x: number, y: number, url: string) {
     if (!ctx) return;
     ctx.drawImage(img, x, y, 100, 100); //taille d'image 100px 100px
     //console.log(x,y,url)
-    objets.push({
+    /*config.push({
+      x,
+      y,
+      url,
+      selected: false,
+      img,
+      width: 100,
+      height: 100,
+      angle: 0,
+      flippedV: false,
+      flippedH: false,
+    });*/
+    config.push({
       x,
       y,
       url,
@@ -269,7 +312,7 @@ function createImage(x: number, y: number, url: string) {
       flippedH: false,
     });
 
-    console.log(objets); // verifier les tableau
+    console.log(config); // verifier les tableau
   };
 }
 
@@ -284,7 +327,7 @@ function clear() {
   ctx.fillStyle = "#a8a6a6";
   ctx.fillRect(10, 10, 600, 600);
 
-  objets.length = 0; // vider dans le tableau
+  config.length = 0; // vider dans le tableau
 }
 
 /// startdrug -> detecter INDEX
@@ -299,7 +342,7 @@ function startDrag(event: MouseEvent) {
   const mouseY = event.clientY - canvasPosition.top;
 
   //initialiser valeur selected
-  objets.forEach((objet) => {
+  config.forEach((objet) => {
     objet.selected = false;
   });
 
@@ -314,7 +357,7 @@ function startDrag(event: MouseEvent) {
 // detecter l'objet cliqué
 function getClickObjet(x: number, y: number) {
   return (
-    objets.find((selected) => {
+    config.find((selected) => {
       if (
         x >= selected.x && // Clic x et left de l'image
         x <= selected.x + 100 && // Clic x et right de l'image
@@ -413,18 +456,18 @@ function FlipImageBack() {
 function deleteUnElement() {
   if (!currentObject) return;
 
-  const index = objets.findIndex((obj) => obj === currentObject);
+  const index = config.findIndex((obj) => obj === currentObject);
 
   // Si il trouve objet dans un listDeObjets => Delete
   if (index !== -1) {
-    objets.splice(index, 1);
+    config.splice(index, 1);
     currentObject = null; //initialiser la valeur de currentObjet
   }
 }
-
+/*
 // function save to LocalStorage
 function saveToLocalStorage() {
-  if (objets.length === 0) {
+  if (config.length === 0) {
     alert("Aucun objet à sauvegarder !");
     return;
   }
@@ -444,22 +487,45 @@ function saveToLocalStorage() {
     );
     return;
   }
+*/
 
-  // Créer une configuration avec un ID unique
-  const newConfig = {
-    id: Date.now(),
-    name,
-    objects: [...objets], // Sauvegarde une copie des objets actuels
-  };
+// function save to LocalStorage
+// function saveToLocalStorage() {
 
-  // Ajouter la nouvelle configuration et sauvegarder
-  savedCanvases.push(newConfig);
-  console.log(savedCanvases);
+//   if (config.length === 0) {
+//     alert("Aucun objet à sauvegarder !")
+//     return;
+//   }
 
-  localStorage.setItem("savedCanvases", JSON.stringify(savedCanvases)); // Enregistrement dans LocalStorage
+//   const name = prompt("Nom de la configuration du canvas :")
+//   if (!name) return;
 
-  alert("Configuration sauvegardée !");
-}
+//   // Récupérer les configurations existantes
+//   let saved = localStorage.getItem("savedCanvases")
+//   let savedCanvases = saved ? JSON.parse(saved) : []
+
+//   // Vérifier si un canvas avec ce nom existe déjà
+//   const nameExists = savedCanvases.some((config: any) => config.name === name)
+//   if (nameExists) {
+//     alert("Une configuration avec ce nom existe déjà. Veuillez choisir un autre nom.")
+//     return;
+//   }
+
+//   // Créer une configuration avec un ID unique
+//   const newConfig = {
+//     id: Date.now(),
+//     name,
+//     objects: [...config], // Sauvegarde une copie des config actuels
+//   };
+
+//   // Ajouter la nouvelle configuration et sauvegarder
+//   savedCanvases.push(newConfig)
+//   console.log(savedCanvases)
+
+//   localStorage.setItem("savedCanvases", JSON.stringify(savedCanvases)); // Enregistrement dans LocalStorage
+
+//   alert("Configuration sauvegardée !")
+// }
 </script>
 
 <style scoped>
