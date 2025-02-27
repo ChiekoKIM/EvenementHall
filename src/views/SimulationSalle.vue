@@ -59,7 +59,7 @@
           />
           <p>Tous effacer</p>
         </button>
-        <button @click="saveToLocalStorage(config)">
+        <button @click="saveConfig(config)">
           <img
             src="/src/assets/icon/save-icon.png"
             alt="Save Button"
@@ -155,7 +155,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import type { NewObject } from "../types/NewObject.type";
-import { saveToLocalStorage } from "../services/saveTLS";
+import { saveConfig } from "../services/save";
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 let ctx: CanvasRenderingContext2D | null = null;

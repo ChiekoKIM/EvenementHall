@@ -3,7 +3,7 @@ import { StorageProvider } from "../providers/StorageProvider";
 import { LocalStorageProvider } from "../providers/LocalStorageProvider";
 
 
-export function saveToLocalStorage(objects: any) {
+export function saveConfig(objects: any) {
 
   if (objects.length === 0){
     alert("Aucun objet à sauvegarder !")
