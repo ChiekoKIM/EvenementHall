@@ -174,11 +174,7 @@ function update() {
 
 // redessiner un carre et des config
 function drawCanvas() {
-  if (!canvas.value) {
-    return;
-  }
-
-  if (!ctx) return;
+  if (!canvas.value || !ctx) return;
 
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
   /*ctx.fillStyle = "gray";
@@ -190,6 +186,7 @@ function drawCanvas() {
     "https://img.freepik.com/photos-gratuite/fond-plancher-bois-clair_53876-88843.jpg?t=st=1740407576~exp=1740411176~hmac=8e24ae97895aba3bcddd0197852f418554c386db60df424f6acd9b34a9fc3199&w=1060";
   ctx.drawImage(img, 0, 0, 600, 600);
 
+  // draw images
   config.forEach((obj) => {
     if (!ctx) return;
 
