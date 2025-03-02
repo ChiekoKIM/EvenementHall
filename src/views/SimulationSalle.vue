@@ -3,9 +3,7 @@
     <div class="blocBtn">
       <p class="title">Elements</p>
       <div class="flex">
-        <button
-          @click="createImage(0, 5, '/src/assets/elements/Round-Table-1.png')"
-        >
+        <button @click="addFurniture('/src/assets/elements/Round-Table-1.png')">
           <img
             src="/src/assets/elements/Round-Table-1.png"
             alt="Button Table"
@@ -13,45 +11,45 @@
           <p>Table Rond</p>
         </button>
 
-        <button @click="createImage(0, 5, '/src/assets/elements/Table-1.png')">
+        <button @click="addFurniture('/src/assets/elements/Table-1.png')">
           <img src="/src/assets/elements/Table-1.png" />
           <p>Table Carré</p>
         </button>
       </div>
 
       <div class="flex">
-        <button @click="createImage(100, 5, '/src/assets/elements/Seat-1.png')">
+        <button @click="addFurniture('/src/assets/elements/Seat-1.png')">
           <img src="/src/assets/elements/Seat-1.png" />
           <p>Chaise</p>
         </button>
 
-        <button @click="createImage(100, 5, '/src/assets/elements/Sofa-1.png')">
+        <button @click="addFurniture('/src/assets/elements/Sofa-1.png')">
           <img src="/src/assets/elements/Sofa-1.png" />
           <p>Canapé</p>
         </button>
       </div>
 
       <div class="flex">
-        <button @click="createImage(0, 5, '/src/assets/elements/Lamp-1.png')">
+        <button @click="addFurniture('/src/assets/elements/Lamp-1.png')">
           <img src="/src/assets/elements/Lamp-1.png" />
           <p>Lamp</p>
         </button>
 
-        <button @click="createImage(0, 5, '/src/assets/elements/Plant-1.png')">
+        <button @click="addFurniture('/src/assets/elements/Plant-1.png')">
           <img src="/src/assets/elements/Plant-1.png/" id="plantImg" />
           <p>Plant</p>
         </button>
       </div>
 
       <div class="flex">
-        <button @click="createImage(200, 5, '/src/assets/elements/Tv-1.png')">
+        <button @click="addFurniture('/src/assets/elements/Tv-1.png')">
           <img src="/src/assets/elements/Tv-1.png" alt="Button tv" />
           <p>TV</p>
         </button>
       </div>
 
       <div class="flex">
-        <button @click="clear">
+        <button @click="clearCanvas">
           <img
             src="/src/assets/icon/supprimer.png"
             alt="Save Button"
@@ -70,52 +68,46 @@
       </div>
     </div>
 
-    <canvas
-      ref="canvas"
-      class="canvas"
-      @mousedown="startDrag"
-      @mousemove="drag"
-      @mouseup="stopDrag"
-    ></canvas>
+    <canvas ref="canvas" class="canvas"></canvas>
 
     <div class="blocBtn">
       <p class="title">Taille image</p>
       <div class="flex">
-        <button @click="reduceImage">
+        <button @click="resizeObject(-10)">
           <img src="/src/assets/icon/moins.png" class="icon" />
         </button>
-        <button @click="expandImage">
+        <button @click="resizeObject(10)">
           <img src="/src/assets/icon/plus.png" class="icon" />
         </button>
       </div>
 
       <p class="title">Taille image</p>
       <div class="flex">
-        <button @click="rotateImageLeft">
+        <button @click="rotateObject(-10)">
           <img src="/src/assets/icon/fleche-left.png" class="icon" />
         </button>
-        <button @click="rotateImageRight">
+        <button @click="rotateObject(10)">
           <img src="/src/assets/icon/fleche-right.png" class="icon" />
         </button>
       </div>
 
       <p class="title">Taille image</p>
       <div class="flex">
-        <button @click="flipImageVertical">
+        <button @click="flipVertical">
           <img src="/src/assets/icon/verticale.png" class="icon" />
           <p>Flip Vertical</p>
         </button>
-        <button @click="flipImageHorizontal">
+        <button @click="flipHorizontal">
           <img src="/src/assets/icon/horizontal.png" class="icon" />
           <p>Flip Horizontal</p>
         </button>
       </div>
       <div class="flex">
-        <button @click="FlipImageBack">
+        <button @click="">
           <p>Flip Back</p>
           Flip Back
         </button>
-        <button @click="deleteUnElement">
+        <button @click="deleteSelectedObject">
           <p>Effacer Element Selectioné</p>
         </button>
       </div>
@@ -127,9 +119,11 @@
 import { onMounted, ref } from "vue";
 import type { NewObject } from "../types/NewObject.type";
 import { saveConfig } from "../services/save";
+import { CanvasManager } from "../model/CanvasManager";
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 let ctx: CanvasRenderingContext2D | null = null;
+let canvasManager: CanvasManager | null = null;
 
 const config: NewObject[] = []; // NewObjet = 1 image = un article ajouté au canva
 
@@ -138,8 +132,10 @@ let currentObject: NewObject | null = null;
 
 //Initialisation dessine rectongle gray
 onMounted(() => {
-  loadSavedCanvas();
-  initCanvas();
+  if (canvas.value) {
+    canvasManager = new CanvasManager(canvas.value);
+    loadSavedCanvas();
+  }
 });
 
 function loadSavedCanvas() {
@@ -148,6 +144,54 @@ function loadSavedCanvas() {
   console.log(savedCanvases);
 }
 
+function addFurniture(url: string) {
+  if (canvasManager) {
+    canvasManager.addObject(50, 50, url);
+  }
+}
+
+// Clear canvas
+function clearCanvas() {
+  if (canvasManager) {
+    canvasManager.clearCanvas();
+  }
+}
+
+// Resize selected object
+function resizeObject(amount: number) {
+  if (canvasManager) {
+    canvasManager.expandSelectedObject(amount);
+  }
+}
+
+// Rotate selected object
+function rotateObject(angle: number) {
+  if (canvasManager) {
+    canvasManager.rotateSelectedObject(angle);
+  }
+}
+
+// Flip selected object
+function flipVertical() {
+  if (canvasManager) {
+    canvasManager.flipVerticalSelectedObject();
+  }
+}
+
+function flipHorizontal() {
+  if (canvasManager) {
+    canvasManager.flipHorizontalSelectedObject();
+  }
+}
+
+// Delete selected object
+function deleteSelectedObject() {
+  if (canvasManager) {
+    canvasManager.deleteSelectedObject();
+  }
+}
+
+/*
 function initCanvas() {
   if (!canvas.value) {
     return;
@@ -165,22 +209,15 @@ function initCanvas() {
 
   update();
 }
-
-//function boucle refraiche page pour dessiner
-function update() {
-  drawCanvas();
-  let animation = requestAnimationFrame(update);
-}
+*/
 
 // redessiner un carre et des config
-function drawCanvas() {
+/*function drawCanvas() {
   if (!canvas.value || !ctx) return;
 
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-  /*ctx.fillStyle = "gray";
-  ctx.fillRect(10, 10, 600, 600);*/
 
-  //Diaplay room rectongle
+
   let img = new Image();
   img.src =
     "https://img.freepik.com/photos-gratuite/fond-plancher-bois-clair_53876-88843.jpg?t=st=1740407576~exp=1740411176~hmac=8e24ae97895aba3bcddd0197852f418554c386db60df424f6acd9b34a9fc3199&w=1060";
@@ -393,6 +430,7 @@ function deleteUnElement() {
     currentObject = null; //initialiser la valeur de currentObjet
   }
 }
+  */
 </script>
 
 <style scoped>

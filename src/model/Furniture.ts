@@ -107,10 +107,14 @@ export class Furniture {
     );
   }
 
+  rotate(angle: number): void {
+    this.angle += angle;
+  }
+
   //  grandir des image
-  expand() {
-    this.width += 10;
-    this.height += 10;
+  expand(amount: number) {
+    this.width += amount;
+    this.height += amount;
   }
 
   //  diminuer de taille de image
