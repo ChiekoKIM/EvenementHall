@@ -1,4 +1,4 @@
-export type NewObject = {
+/*export type NewObject = {
   x: number;
   y: number;
   url?: string;
@@ -10,3 +10,4 @@ export type NewObject = {
   flippedV: boolean;
   flippedH: boolean;
 };
+*/

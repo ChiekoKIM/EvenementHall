@@ -1,4 +1,3 @@
-import type { NewObject } from "../types/NewObject.type";
 import { Furniture } from "./Furniture";
 
 export class CanvasManager {
@@ -107,7 +106,7 @@ export class CanvasManager {
     //Vérifier il y a un objet Funiture ou l'endroit clické
     this.objects.forEach((obj) => {
       if (obj.isInsideClickObjet(x, y)) {
-        console.log("colligion détecter");
+        //console.log("colligion détecter");
         obj.selected = true;
         this.currentObject = obj;
         this.isDragging = true;
@@ -115,7 +114,7 @@ export class CanvasManager {
         // Calculate drag offset
         this.dragOffsetX = x - obj.x;
         this.dragOffsetY = y - obj.y;
-        console.log("drag offset" + this.dragOffsetX + " " + this.dragOffsetY);
+        //console.log("drag offset" + this.dragOffsetX + " " + this.dragOffsetY);
       }
     });
   }
@@ -128,9 +127,9 @@ export class CanvasManager {
     // Update object position with offset
     this.currentObject.x = x - this.dragOffsetX;
     this.currentObject.y = y - this.dragOffsetY;
-    console.log(
+    /*console.log(
       "current : " + this.currentObject.x + " " + this.currentObject.y
-    );
+    );*/
   }
 
   handleMouseUp(): void {

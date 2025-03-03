@@ -57,7 +57,7 @@
           />
           <p>Tous effacer</p>
         </button>
-        <button @click="saveConfig(config)">
+        <button @click="saveConfig(canvasManager?.objects)">
           <img
             src="/src/assets/icon/save-icon.png"
             alt="Save Button"
@@ -117,18 +117,12 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import type { NewObject } from "../types/NewObject.type";
+//import type { NewObject } from "../types/NewObject.type";
 import { saveConfig } from "../services/save";
 import { CanvasManager } from "../model/CanvasManager";
 
 const canvas = ref<HTMLCanvasElement | null>(null);
-let ctx: CanvasRenderingContext2D | null = null;
 let canvasManager: CanvasManager | null = null;
-
-const config: NewObject[] = []; // NewObjet = 1 image = un article ajouté au canva
-
-let isDragging = false;
-let currentObject: NewObject | null = null;
 
 //Initialisation dessine rectongle gray
 onMounted(() => {
@@ -190,247 +184,6 @@ function deleteSelectedObject() {
     canvasManager.deleteSelectedObject();
   }
 }
-
-/*
-function initCanvas() {
-  if (!canvas.value) {
-    return;
-  }
-
-  canvas.value.width = 600;
-  canvas.value.height = 600;
-
-  ctx = canvas.value.getContext("2d");
-
-  if (!ctx) return;
-
-  ctx.fillStyle = "gray";
-  ctx.fillRect(10, 10, 600, 600);
-
-  update();
-}
-*/
-
-// redessiner un carre et des config
-/*function drawCanvas() {
-  if (!canvas.value || !ctx) return;
-
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-
-
-  let img = new Image();
-  img.src =
-    "https://img.freepik.com/photos-gratuite/fond-plancher-bois-clair_53876-88843.jpg?t=st=1740407576~exp=1740411176~hmac=8e24ae97895aba3bcddd0197852f418554c386db60df424f6acd9b34a9fc3199&w=1060";
-  ctx.drawImage(img, 0, 0, 600, 600);
-
-  // draw images
-  config.forEach((obj) => {
-    if (!ctx) return;
-
-    ctx.save();
-    ctx.translate(obj.x + obj.width / 2, obj.y + obj.height / 2);
-    ctx.rotate((obj.angle * Math.PI) / 180); // rotation de objet
-
-    //flip
-    if (obj?.flippedV) {
-      ctx.scale(1, -1);
-    }
-
-    if (obj?.flippedH) {
-      ctx.scale(-1, 1);
-    }
-
-    ctx.drawImage(
-      obj.img,
-      -obj.width / 2,
-      -obj.height / 2,
-      obj.width,
-      obj.height
-    );
-
-    // Ajout du contour (stroke) si l'objet est sélectionné
-    if (obj.selected) {
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = "orange";
-      ctx.strokeRect(-obj.width / 2, -obj.height / 2, obj.width, obj.height);
-    }
-
-    ctx.restore();
-  });
-}
-
-// function pour button afficher des images sur canvas
-function createImage(x: number, y: number, url: string) {
-  if (!canvas) {
-    return;
-  }
-
-  let img = new Image();
-  img.src = url;
-  img.onload = () => {
-    if (!ctx) return;
-    ctx.drawImage(img, x, y, 100, 100); //taille d'image 100px 100px
-
-    config.push({
-      x,
-      y,
-      url,
-      selected: false,
-      img,
-      width: 100,
-      height: 100,
-      angle: 0,
-      flippedV: false,
-      flippedH: false,
-    });
-
-    console.log(config); // verifier les tableau
-  };
-}
-
-// pour button effacer des images
-function clear() {
-  if (!canvas.value) {
-    return;
-  }
-
-  if (!ctx) return;
-  ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-  ctx.fillStyle = "#a8a6a6";
-  ctx.fillRect(10, 10, 600, 600);
-
-  config.length = 0; // vider dans le tableau
-}
-
-/// startdrug -> detecter INDEX
-function startDrag(event: MouseEvent) {
-  if (!canvas.value) {
-    return;
-  }
-
-  const canvasPosition = canvas.value.getBoundingClientRect(); // position de canvas sur window
-
-  const mouseX = event.clientX - canvasPosition.left;
-  const mouseY = event.clientY - canvasPosition.top;
-
-  //initialiser valeur selected
-  config.forEach((objet) => {
-    objet.selected = false;
-  });
-
-  currentObject = getClickObjet(mouseX, mouseY); // image detecté = currentObjet
-
-  if (currentObject) {
-    isDragging = true;
-    currentObject.selected = true;
-  }
-}
-
-// detecter l'objet cliqué
-function getClickObjet(x: number, y: number) {
-  return (
-    config.find((selected) => {
-      if (
-        x >= selected.x && // Clic x et left de l'image
-        x <= selected.x + 100 && // Clic x et right de l'image
-        y >= selected.y && // Clic y et  de top l'image
-        y <= selected.y + 100 // Clic y et bottom de l'image
-      ) {
-        console.log("Collision détectée à :", selected.x, selected.y);
-        console.log("selected element : " + selected);
-        return selected;
-      } else {
-        console.log("aucun image détecté");
-      }
-    }) || null
-  );
-}
-
-// Drag et déplacer des element /
-function drag(event: MouseEvent) {
-  if (canvas.value && isDragging && currentObject) {
-    const canvasPosition = canvas.value.getBoundingClientRect();
-    const mouseX = event.clientX - canvasPosition.left;
-    const mouseY = event.clientY - canvasPosition.top;
-
-    currentObject.x = mouseX - 50;
-    currentObject.y = mouseY - 50;
-
-    drawCanvas(); // function redessiner un image
-  }
-}
-
-function stopDrag() {
-  isDragging = false;
-}
-
-// function grandir des image
-function expandImage() {
-  if (currentObject) {
-    currentObject.width += 10;
-    currentObject.height += 10;
-    drawCanvas();
-  }
-}
-
-// function diminuer de taille de image
-function reduceImage() {
-  if (currentObject) {
-    currentObject.width -= 10;
-    currentObject.height -= 10;
-    console.log(currentObject.width);
-    drawCanvas();
-  }
-}
-
-function rotateImageRight() {
-  console.log("rotate");
-  if (currentObject) {
-    currentObject.angle += 10;
-  }
-}
-
-function rotateImageLeft() {
-  if (currentObject) {
-    currentObject.angle -= 10;
-  }
-}
-
-function flipImageVertical() {
-  if (!ctx || !canvas.value || !currentObject) return;
-
-  currentObject.flippedV = !currentObject.flippedV;
-}
-
-function flipImageHorizontal() {
-  if (!ctx || !canvas.value || !currentObject) return;
-  console.log(currentObject);
-
-  currentObject.flippedH = !currentObject.flippedH;
-}
-
-// ERROR
-function FlipImageBack() {
-  if (!ctx || !canvas.value || !currentObject) return;
-
-  console.log(currentObject);
-  console.log(currentObject.url);
-  currentObject.url = "/src/assets/elements/Sofa-1.png";
-  console.log(currentObject.url);
-}
-
-function deleteUnElement() {
-  if (!currentObject) return;
-
-  const index = config.findIndex((obj) => obj === currentObject);
-
-  // Si il trouve objet dans un listDeObjets => Delete
-  if (index !== -1) {
-    config.splice(index, 1);
-    currentObject = null; //initialiser la valeur de currentObjet
-  }
-}
-  */
 </script>
 
 <style scoped>

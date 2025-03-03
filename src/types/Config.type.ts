@@ -1,5 +1,5 @@
-import type { NewObject } from "./NewObject.type";
+import type { Furniture } from "../model/Furniture";
 
 export type Config = {
-  config: NewObject[]
-}
+  config: Furniture[];
+};
